@@ -1,0 +1,2475 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b2447">
+<title>SKBT PHOTO ID 1.0</title>
+<script src="config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0b2447; --navy2:#19376d; --navy3:#2c4f93; --white:#fff; --grey:#f1f4f9; --grey2:#e1e7f0; --grey3:#8793a8;
+  --text:#14213d; --green:#10b981; --green-d:#059669; --amber:#f59e0b; --red:#dc2626; --blue:#2563eb;
+  --radius:14px; --shadow:0 2px 10px rgba(11,36,71,.08);
+  font-family:'Century Gothic','CenturyGothic','URW Gothic','Questrial','Avant Garde',Futura,'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--grey);color:var(--text);font-size:15px;-webkit-text-size-adjust:100%}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+h1,h2,h3{margin:0}
+.muted{color:var(--grey3)}.small{font-size:12.5px}.mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+
+/* Login */
+#login{position:fixed;inset:0;z-index:100;background:linear-gradient(160deg,var(--navy),var(--navy3));display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:#fff;border-radius:20px;padding:32px 28px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.login-card h1{color:var(--navy);font-size:24px;letter-spacing:.5px}
+.login-card p{color:var(--grey3);margin:6px 0 22px}
+#gsiButton{display:flex;justify-content:center;min-height:44px}
+
+/* Shell */
+.shell{display:grid;grid-template-columns:232px 1fr;min-height:100vh}
+.sidebar{background:var(--navy);color:#fff;padding:18px 12px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+.brand{padding:6px 10px 16px;border-bottom:1px solid rgba(255,255,255,.12);margin-bottom:8px}
+.brand b{display:block;font-size:17px;letter-spacing:.6px}
+.brand span{font-size:10.5px;opacity:.7;letter-spacing:1px}
+.nav-btn{display:flex;align-items:center;gap:12px;background:none;border:0;color:#cfd8ea;padding:11px 12px;border-radius:10px;text-align:left;font-size:14.5px}
+.nav-btn svg{width:20px;height:20px;flex:none}
+.nav-btn:hover{background:rgba(255,255,255,.08)}
+.nav-btn.active{background:var(--navy3);color:#fff}
+.nav-spacer{flex:1}
+.side-foot{font-size:11px;opacity:.6;padding:8px 10px}
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{background:#fff;border-bottom:1px solid var(--grey2);padding:10px 22px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:20}
+.topbar h2{font-size:18px;color:var(--navy);flex:1}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 11px;font-size:12px;background:var(--grey);border:1px solid var(--grey2);white-space:nowrap}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--grey3);display:inline-block}
+.dot.ok{background:var(--green)}.dot.warn{background:var(--amber)}.dot.bad{background:var(--red)}
+.content{padding:20px 22px 40px}
+.page{display:none}.page.active{display:block}
+
+/* Cards, forms */
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.card h3{font-size:14px;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px}
+.grid{display:grid;gap:14px}
+.stats{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.stat b{display:block;font-size:30px;color:var(--navy)}
+.stat.ok b{color:var(--green-d)}.stat.warn b{color:var(--amber)}
+label.f{display:block;font-size:12.5px;color:var(--grey3);margin:10px 0 4px}
+input[type=text],input[type=search],input[type=number],input[type=email],input[type=url],input[type=password],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--grey2);border-radius:10px;background:#fff;min-height:42px}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--navy3);outline-offset:1px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>.grow{flex:1;min-width:140px}
+.btn{border:0;border-radius:10px;padding:10px 16px;background:var(--navy2);color:#fff;font-weight:600;min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{background:var(--navy3)}
+.btn.ghost{background:#fff;color:var(--navy2);border:1px solid var(--grey2)}
+.btn.ghost:hover{background:var(--grey)}
+.btn.green{background:var(--green-d)}.btn.green:hover{background:var(--green)}
+.btn.red{background:var(--red)}
+.btn.sm{padding:6px 11px;min-height:34px;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn svg{width:18px;height:18px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;color:var(--grey3);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:2px solid var(--grey2)}
+td{padding:9px 10px;border-bottom:1px solid var(--grey2);vertical-align:middle}
+.table-wrap{overflow:auto;max-height:62vh}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:700}
+.tag.ok{background:#d1fae5;color:#065f46}.tag.no{background:#fee2e2;color:#991b1b}.tag.mid{background:#fef3c7;color:#92400e}
+.bar{height:9px;background:var(--grey2);border-radius:9px;overflow:hidden;min-width:80px}
+.bar i{display:block;height:100%;background:var(--green)}
+
+/* Camera page */
+.cam-layout{display:grid;grid-template-columns:300px minmax(0,1fr) 340px;gap:14px;align-items:start}
+.stage-wrap{background:#050b17;border-radius:var(--radius);overflow:hidden;position:relative}
+.stage{position:relative;width:100%;margin:0 auto;background:#000;aspect-ratio:16/9;max-height:68vh}
+.stage video,.stage img.wifi,.stage canvas.overlay{position:absolute;inset:0;width:100%;height:100%}
+.stage video,.stage img.wifi{object-fit:fill}
+.stage video.mirror{transform:scaleX(-1)}
+.stage canvas.overlay.mirror{transform:scaleX(-1)}
+.stage .msg{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;color:#dbe4f5;padding:0 24px;z-index:3}
+.stage .count{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:120px;font-weight:700;color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.7);z-index:4;pointer-events:none}
+.stage .flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:5;transition:opacity .25s}
+.stage .flash.on{opacity:.85;transition:none}
+.hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);background:rgba(11,36,71,.88);color:#fff;border-radius:999px;padding:8px 18px;font-weight:700;letter-spacing:.5px;z-index:4;white-space:nowrap}
+.hint.good{background:var(--green-d)}.hint.warn{background:#b45309}.hint.bad{background:#b91c1c}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px;background:var(--navy)}
+.chip{font-size:11.5px;font-weight:700;letter-spacing:.4px;color:#fff;background:rgba(255,255,255,.12);border-radius:8px;padding:5px 9px;display:inline-flex;gap:6px;align-items:center}
+.chip.ok{background:var(--green-d)}.chip.warn{background:#b45309}.chip.bad{background:#b91c1c}
+.cam-ctrl{padding:12px;background:#fff;display:grid;gap:8px}
+.preview-box{background:var(--grey);border-radius:12px;padding:10px;text-align:center}
+.preview-box canvas{max-width:100%;height:auto;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.2);touch-action:none;cursor:grab}
+.preview-empty{color:var(--grey3);padding:44px 10px;font-size:13.5px}
+.q-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px dashed var(--grey2);font-size:13.5px;gap:8px}
+.q-row:last-child{border:0}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg label{flex:1;min-width:70px;text-align:center;border:1px solid var(--grey2);border-radius:10px;padding:8px 6px;cursor:pointer;font-size:13px;background:#fff}
+.seg input{display:none}
+.seg input:checked+span{font-weight:700}
+.seg label:has(input:checked){background:var(--navy2);color:#fff;border-color:var(--navy2)}
+.actionbar{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;background:#fff;padding:12px;border-radius:var(--radius);box-shadow:var(--shadow)}
+.actionbar .btn{flex:1;min-width:120px}
+.btn.snap{flex:2.2;min-width:200px;font-size:19px;padding:16px;background:var(--green-d);min-height:58px;letter-spacing:.8px}
+.btn.snap:hover{background:var(--green)}
+.student-pick{background:var(--grey);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:13.5px}
+.student-pick b{display:block;color:var(--navy);font-size:15px}
+.slider{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:8px}
+.slider input{flex:1}
+.nudge{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+
+/* Gallery */
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.gcard{background:#fff;border-radius:12px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column}
+.gimg{aspect-ratio:7/10;background:var(--grey2);display:flex;align-items:center;justify-content:center;color:var(--grey3);font-size:12px;text-align:center;cursor:pointer;position:relative}
+.gimg img{width:100%;height:100%;object-fit:cover}
+.gimg .sel{position:absolute;top:6px;left:6px;width:22px;height:22px}
+.ginfo{padding:8px 10px;font-size:12.5px;flex:1}
+.ginfo b{display:block;font-size:13px;color:var(--navy);line-height:1.25}
+.gact{display:flex;gap:4px;padding:0 8px 8px;flex-wrap:wrap}
+
+/* Modal + toast */
+.modal{position:fixed;inset:0;background:rgba(5,11,23,.65);z-index:80;display:flex;align-items:center;justify-content:center;padding:14px}
+.modal .box{background:#fff;border-radius:16px;padding:20px;max-width:560px;width:100%;max-height:92vh;overflow:auto}
+.modal .box.wide{max-width:900px}
+.modal h3{margin-bottom:10px;color:var(--navy)}
+#toasts{position:fixed;right:14px;bottom:14px;z-index:120;display:grid;gap:8px;max-width:min(380px,calc(100vw - 28px))}
+.toast{background:var(--navy);color:#fff;padding:12px 14px;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.3);font-size:14px}
+.toast.ok{background:var(--green-d)}.toast.bad{background:#b91c1c}.toast.warn{background:#b45309}
+.callout{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:10px;padding:10px 12px;font-size:13px;margin:8px 0}
+.callout.warn{background:#fffbeb;border-color:#fde68a;color:#78350f}
+.callout.bad{background:#fef2f2;border-color:#fecaca;color:#7f1d1d}
+
+/* Print */
+.preview-scale{transform-origin:top left}
+.sheet{position:relative;width:210mm;height:297mm;background:#fff;box-shadow:0 2px 14px rgba(0,0,0,.25);margin:0 0 14px 0;overflow:hidden;page-break-after:always;break-after:page}
+.cell{position:absolute;width:35mm;height:50mm;overflow:hidden}
+.cell img{width:35mm;height:50mm;display:block}
+.cell.guide{box-shadow:0 0 0 .15mm #777}
+.print-sheets{overflow:auto;background:#cbd3e0;padding:14px;border-radius:12px}
+@page{size:A4 portrait;margin:0}
+
+/* Mobile */
+@media (max-width:1180px){
+  .cam-layout{grid-template-columns:1fr 1fr}
+  .cam-layout .col-center{grid-column:1/-1;order:-1}
+}
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{position:fixed;top:auto;bottom:0;left:0;right:0;height:auto;flex-direction:row;padding:4px 6px calc(4px + env(safe-area-inset-bottom));z-index:60;gap:2px;justify-content:space-around}
+  .brand,.side-foot,.nav-spacer{display:none}
+  .nav-btn{flex-direction:column;gap:2px;font-size:10px;padding:6px 4px;flex:1;align-items:center;text-align:center}
+  .content{padding:12px 12px 90px}
+  .topbar{padding:8px 12px}
+  .cam-layout{grid-template-columns:1fr}
+  .actionbar{position:sticky;bottom:calc(64px + env(safe-area-inset-bottom));z-index:30;box-shadow:0 -4px 18px rgba(0,0,0,.18)}
+  .btn.snap{flex:1 1 100%;min-height:64px;font-size:21px}
+  .stage{max-height:62vh}
+  #toasts{bottom:150px}
+}
+@media print{
+  html,body{background:#fff!important}
+  .sidebar,.topbar,.no-print,#toasts,.modal,#login{display:none!important}
+  .shell{display:block}
+  .content{padding:0}
+  .page{display:none!important}
+  #page-print{display:block!important}
+  #page-print>*:not(.print-sheets){display:none!important}
+  .print-sheets{padding:0;background:#fff;overflow:visible}
+  .preview-scale{transform:none!important;width:auto!important;height:auto!important}
+  .sheet{box-shadow:none;margin:0}
+}
+</style>
+
+</head>
+<body>
+
+<!-- LOG MASUK -->
+<div id="login" hidden>
+  <div class="login-card">
+    <h1>SKBT PHOTO ID 1.0</h1>
+    <p>SMART STUDENT PASSPORT PHOTO SYSTEM<br>Sekolah Kebangsaan Bukit Tongkat</p>
+    <div id="gsiButton"></div>
+    <p id="loginMsg" class="small" style="margin-top:16px"></p>
+  </div>
+</div>
+
+<div class="shell" id="shell" hidden>
+  <nav class="sidebar" aria-label="Menu utama">
+    <div class="brand"><b>SKBT PHOTO ID</b><span>VERSI 1.0 · SK BUKIT TONGKAT</span></div>
+    <button class="nav-btn active" data-page="dashboard"><svg id="i-dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg><span>Dashboard</span></button>
+    <button class="nav-btn" data-page="camera"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>Kamera</span></button>
+    <button class="nav-btn" data-page="students"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Murid</span></button>
+    <button class="nav-btn" data-page="gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg><span>Galeri</span></button>
+    <button class="nav-btn" data-page="print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg><span>Cetak</span></button>
+    <button class="nav-btn" data-page="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Tetapan</span></button>
+    <div class="nav-spacer"></div>
+    <div class="side-foot">SMART STUDENT PASSPORT PHOTO SYSTEM</div>
+  </nav>
+
+  <div class="main">
+    <header class="topbar">
+      <h2 id="pageTitle">Dashboard</h2>
+      <span class="pill" id="queuePill" hidden><span class="dot warn"></span><span id="queueText"></span></span>
+      <span class="pill" id="netPill"><span class="dot ok" id="netDot"></span><span id="netText">Dalam talian</span></span>
+      <span class="pill" id="userPill">—</span>
+    </header>
+
+    <main class="content">
+
+      <!-- DASHBOARD -->
+      <section class="page active" id="page-dashboard">
+        <div class="grid stats" id="statCards"></div>
+        <div class="card" style="margin-top:14px">
+          <h3>Kemajuan mengikut kelas</h3>
+          <div class="table-wrap"><table id="classTable"></table></div>
+        </div>
+        <div class="card" style="margin-top:14px">
+          <h3>Status Google Drive</h3>
+          <div id="driveStatus" class="small muted">Memuatkan…</div>
+        </div>
+      </section>
+
+      <!-- KAMERA -->
+      <section class="page" id="page-camera">
+        <div class="cam-layout">
+          <!-- Kiri: murid -->
+          <div class="card col-left">
+            <h3>Pilih murid</h3>
+            <label class="f" for="camClass">Kelas</label>
+            <select id="camClass"></select>
+            <label class="f" for="camSearch">Cari nama</label>
+            <input type="search" id="camSearch" placeholder="Taip nama…" autocomplete="off">
+            <label class="f" for="camStudent">Nama murid</label>
+            <select id="camStudent" size="1"></select>
+            <div class="student-pick" id="studentInfo">Tiada murid dipilih.</div>
+            <div class="row" style="margin-top:10px">
+              <button class="btn ghost sm grow" id="btnPrevStudent">‹ Sebelum</button>
+              <button class="btn ghost sm grow" id="btnNextStudent">Seterusnya ›</button>
+            </div>
+            <label class="f" style="display:flex;gap:8px;align-items:center;margin-top:12px"><input type="checkbox" id="optAutoNext" checked> Pilih murid seterusnya (belum bergambar) selepas simpan</label>
+          </div>
+
+          <!-- Tengah: kamera -->
+          <div class="col-center">
+            <div class="stage-wrap">
+              <div class="chips" id="chips">
+                <span class="chip" id="chCam">CAMERA —</span>
+                <span class="chip" id="chFace">FACE —</span>
+                <span class="chip" id="chSharp">SHARPNESS —</span>
+                <span class="chip" id="chLight">LIGHTING —</span>
+                <span class="chip" id="chReady">NOT READY</span>
+              </div>
+              <div class="stage" id="stage">
+                <video id="video" playsinline muted autoplay></video>
+                <img class="wifi" id="wifiImg" alt="" hidden>
+                <canvas class="overlay" id="overlay"></canvas>
+                <div class="msg" id="stageMsg">Tekan <b>MULA KAMERA</b> untuk bermula.</div>
+                <div class="count" id="countdown" hidden></div>
+                <div class="flash" id="flash"></div>
+                <div class="hint" id="hint" hidden></div>
+              </div>
+              <div class="cam-ctrl">
+                <div class="row">
+                  <select id="camSource" class="grow" aria-label="Pilih kamera"></select>
+                  <button class="btn ghost sm" id="btnStartCam">Mula kamera</button>
+                  <button class="btn ghost sm" id="btnSwitchCam">SWITCH CAMERA</button>
+                  <button class="btn ghost sm" id="btnStopCam">Tutup kamera</button>
+                </div>
+                <div class="small muted" id="camInfo">Peranti: —</div>
+                <div class="row small">
+                  <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="optMirror"> Cermin paparan (tidak menjejaskan gambar)</label>
+                  <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="optTakePhoto" checked> Guna takePhoto (resolusi penuh) jika disokong</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kanan: kualiti + pratonton -->
+          <div class="col-right">
+            <div class="card">
+              <h3>Pemeriksaan kualiti</h3>
+              <div class="q-row"><span>Wajah</span><b id="qFace">—</b></div>
+              <div class="q-row"><span>Ketajaman</span><b id="qSharp">—</b></div>
+              <div class="q-row"><span>Pencahayaan</span><b id="qLight">—</b></div>
+              <div class="q-row"><span>Resolusi kamera</span><b id="qRes">—</b></div>
+              <div class="q-row"><span>Autofocus</span><b id="qAf">—</b></div>
+              <div class="q-row"><span>Auto Snap</span>
+                <label class="small" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="optAutoSnap"> <b id="autoSnapLabel">AUTO SNAP: OFF</b></label></div>
+              <div id="gateMsg" class="callout" hidden></div>
+            </div>
+            <div class="card" style="margin-top:14px">
+              <h3>Pratonton foto pasport</h3>
+              <div class="preview-box" id="previewBox">
+                <div class="preview-empty" id="previewEmpty">Belum ada gambar. Tekan SNAP PHOTO.</div>
+                <canvas id="previewCanvas" width="413" height="591" hidden></canvas>
+              </div>
+              <div id="editTools" hidden>
+                <label class="f">Latar belakang</label>
+                <div class="seg" id="bgSeg">
+                  <label><input type="radio" name="bg" value="original"><span>Asal</span></label>
+                  <label><input type="radio" name="bg" value="white" checked><span>Putih</span></label>
+                  <label><input type="radio" name="bg" value="blue"><span>Biru</span></label>
+                </div>
+                <div class="slider"><span>Zum</span><input type="range" id="zoomRange" min="60" max="160" value="100"><b id="zoomVal">100%</b></div>
+                <div class="nudge">
+                  <button class="btn ghost sm" data-nudge="-1,0" aria-label="Kiri">←</button>
+                  <button class="btn ghost sm" data-nudge="1,0" aria-label="Kanan">→</button>
+                  <button class="btn ghost sm" data-nudge="0,-1" aria-label="Atas">↑</button>
+                  <button class="btn ghost sm" data-nudge="0,1" aria-label="Bawah">↓</button>
+                </div>
+                <button class="btn ghost sm" id="btnAutoCrop" style="margin-top:8px;width:100%">Auto crop (set semula)</button>
+                <div class="small muted" style="margin-top:6px">Seret gambar untuk melaraskan kedudukan. <span id="bgStatus"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="actionbar" id="actionbar">
+          <button class="btn snap" id="btnSnap">SNAP PHOTO</button>
+          <button class="btn ghost" id="btnRetake" disabled>RETAKE PHOTO</button>
+          <button class="btn green" id="btnSave" disabled>SAVE PHOTO</button>
+          <button class="btn ghost" id="btnAutoToggle">AUTO SNAP: OFF</button>
+          <button class="btn ghost" id="btnDownload" disabled>DOWNLOAD PHOTO</button>
+          <button class="btn ghost" id="btnPrintCur" disabled>PRINT PHOTO</button>
+        </div>
+      </section>
+
+      <!-- MURID -->
+      <section class="page" id="page-students">
+        <div class="card">
+          <div class="row">
+            <input type="search" id="stuSearch" class="grow" placeholder="Cari nama atau ID…">
+            <select id="stuClass" style="max-width:220px"></select>
+            <button class="btn" id="btnAddStudent">+ Tambah murid</button>
+            <button class="btn ghost" id="btnImportCsv">Import CSV</button>
+            <button class="btn ghost" id="btnImportSheet">Import Google Sheets</button>
+            <a class="btn ghost" id="btnTemplate" download="students_template.csv">Templat CSV</a>
+          </div>
+          <div class="small muted" id="stuCount" style="margin:10px 0"></div>
+          <div class="table-wrap"><table id="stuTable"></table></div>
+          <input type="file" id="csvFile" accept=".csv,text/csv" hidden>
+        </div>
+      </section>
+
+      <!-- GALERI -->
+      <section class="page" id="page-gallery">
+        <div class="card">
+          <div class="row">
+            <input type="search" id="galSearch" class="grow" placeholder="Cari nama…">
+            <select id="galClass" style="max-width:220px"></select>
+            <select id="galStatus" style="max-width:200px">
+              <option value="all">Semua murid</option>
+              <option value="done">Sudah bergambar</option>
+              <option value="todo">Belum bergambar</option>
+            </select>
+            <button class="btn ghost" id="btnGalPrint">Cetak yang dipilih</button>
+          </div>
+          <div class="small muted" id="galCount" style="margin:10px 0"></div>
+          <div class="gal" id="galGrid"></div>
+          <div class="row" style="justify-content:center;margin-top:14px">
+            <button class="btn ghost sm" id="galPrev">‹</button><span id="galPage" class="small"></span><button class="btn ghost sm" id="galNext">›</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- CETAK -->
+      <section class="page" id="page-print">
+        <div class="card no-print">
+          <h3>Cetakan foto pasport (35 × 50 mm)</h3>
+          <div class="callout">Pilih <b>Actual size / Scale 100%</b> dan matikan "Headers and footers" dalam dialog cetak. Halaman ialah A4 tepat tanpa margin pelayar supaya ukuran tidak berubah. Anda juga boleh <b>Eksport PDF</b> (ukuran tetap dalam mm).</div>
+          <div class="row">
+            <div><label class="f">Salinan setiap gambar</label><input type="number" id="prCopies" min="1" max="60" value="4" style="width:110px"></div>
+            <div><label class="f">Margin (mm)</label><input type="number" id="prMargin" min="0" max="30" step="0.5" value="10" style="width:110px"></div>
+            <div><label class="f">Jarak (mm)</label><input type="number" id="prGap" min="0" max="20" step="0.5" value="3" style="width:110px"></div>
+            <label style="display:flex;gap:6px;align-items:center;margin-top:22px"><input type="checkbox" id="prGuides" checked> Garisan potong</label>
+          </div>
+          <div class="small muted" id="prList" style="margin:12px 0"></div>
+          <div class="row">
+            <button class="btn" id="btnPrBuild">Jana pratonton</button>
+            <button class="btn green" id="btnPrPrint" disabled>Cetak</button>
+            <button class="btn ghost" id="btnPrPdf" disabled>Eksport PDF</button>
+            <button class="btn ghost" id="btnPrClear">Kosongkan pilihan</button>
+          </div>
+          <div class="small muted" id="prInfo" style="margin-top:8px"></div>
+        </div>
+        <div class="print-sheets" id="printSheets" style="margin-top:14px"><div class="preview-scale" id="previewScale"><div id="sheets"></div></div></div>
+      </section>
+
+      <!-- TETAPAN -->
+      <section class="page" id="page-settings">
+        <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+          <div class="card">
+            <h3>Kualiti & pemprosesan (Admin)</h3>
+            <label class="f">Ambang ketajaman (Variance of Laplacian) — lebih tinggi = lebih ketat</label><input type="number" id="sBlur" min="5" max="1000">
+            <div class="small muted" id="liveSharpHint">Nilai semasa daripada kamera: —</div>
+            <label class="f">Ambang TOO DARK (luma min)</label><input type="number" id="sDark" min="10" max="120">
+            <label class="f">Ambang TOO BRIGHT (luma maks)</label><input type="number" id="sBright" min="150" max="250">
+            <label class="f">Kualiti JPEG (0.70–1.00)</label><input type="number" id="sJpeg" min="0.7" max="1" step="0.01">
+            <label class="f">Latar belakang lalai</label>
+            <select id="sBg"><option value="original">Asal</option><option value="white">Putih</option><option value="blue">Biru</option></select>
+            <label class="f">Bilangan bingkai lulus berturut-turut untuk Auto Snap</label><input type="number" id="sFrames" min="3" max="30">
+            <label class="f">Nisbah tinggi kepala dalam foto (0.45–0.75)</label><input type="number" id="sHead" min="0.45" max="0.75" step="0.01">
+            <label class="f">Sesi (tahun)</label><input type="text" id="sSession" maxlength="4">
+            <label class="f">Tempoh simpanan gambar (hari)</label><input type="number" id="sRetention" min="30" max="3650">
+            <button class="btn" id="btnSaveSettings" style="margin-top:14px">Simpan tetapan</button>
+            <div class="small muted" id="settingsNote" style="margin-top:8px"></div>
+          </div>
+
+          <div class="card">
+            <h3>Kamera WiFi / IP</h3>
+            <div class="callout warn">Pelayar hanya boleh menangkap gambar daripada kamera IP jika ia menghantar header CORS dan menggunakan HTTPS (apabila aplikasi di HTTPS). Jika tidak, gunakan aplikasi "webcam mode" (iVCam, Camo, DroidCam, OBS Virtual Camera) — kamera akan muncul sebagai kamera USB biasa.</div>
+            <label class="f">Jenis strim</label>
+            <select id="wType"><option value="mjpeg">MJPEG (strim berterusan)</option><option value="snapshot">Snapshot JPEG (muat semula berkala)</option></select>
+            <label class="f">Alamat (URL)</label><input type="url" id="wUrl" placeholder="https://192.168.1.50/video.mjpg">
+            <label class="f">Selang snapshot (ms)</label><input type="number" id="wInterval" value="500" min="200">
+            <div class="row" style="margin-top:12px">
+              <button class="btn" id="btnWifiConnect">Sambung kamera WiFi</button>
+              <button class="btn ghost" id="btnWifiSave">Simpan alamat</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Sistem</h3>
+            <div id="sysInfo" class="small"></div>
+            <div class="row" style="margin-top:10px">
+              <button class="btn ghost sm" id="btnRetryQueue">Cuba hantar semula baris gilir</button>
+              <button class="btn ghost sm" id="btnReloadData">Muat semula data</button>
+            </div>
+            <div id="queueList" class="small" style="margin-top:10px"></div>
+          </div>
+
+          <div class="card" id="adminUsers" hidden>
+            <h3>Pengguna (Admin)</h3>
+            <div class="table-wrap" style="max-height:260px"><table id="userTable"></table></div>
+            <div class="row" style="margin-top:10px">
+              <input type="email" id="uEmail" class="grow" placeholder="emel@gmail.com">
+              <input type="text" id="uName" class="grow" placeholder="Nama">
+              <select id="uRole" style="max-width:110px"><option>GURU</option><option>ADMIN</option></select>
+              <button class="btn sm" id="btnAddUser">Simpan</button>
+            </div>
+          </div>
+
+          <div class="card" id="adminRetention" hidden>
+            <h3>Tempoh simpanan & pemadaman (Admin)</h3>
+            <div class="small muted">Gambar melebihi tempoh simpanan disenaraikan. Pemadaman memindahkan fail ke tong sampah Drive (boleh dipulihkan 30 hari) dan memerlukan pengesahan.</div>
+            <div class="row" style="margin-top:10px"><button class="btn ghost sm" id="btnCheckExpired">Semak gambar tamat tempoh</button></div>
+            <div id="expiredList" class="small" style="margin-top:10px"></div>
+          </div>
+
+          <div class="card" id="adminLogs" hidden style="grid-column:1/-1">
+            <h3>Rekod audit (Admin)</h3>
+            <div class="row"><select id="logSheet" style="max-width:220px"><option value="ACTIVITY_LOGS">Aktiviti</option><option value="CAMERA_LOGS">Kamera</option></select><button class="btn ghost sm" id="btnLoadLogs">Muat</button></div>
+            <div class="table-wrap" style="max-height:300px;margin-top:10px"><table id="logTable"></table></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div id="toasts" aria-live="polite"></div>
+<div id="modalRoot"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+/* PhotoProcessor: fungsi pengukuran kualiti, pemotongan pasport, CSV dan JPEG.
+   Fungsi tulen diuji secara automatik (tests/pure.test.js). */
+var PP = (function () {
+  'use strict';
+
+  var PASSPORT = { w: 413, h: 591, aspect: 7 / 10, dpi: 300, mmW: 35, mmH: 50 };
+
+  function toGray(data, w, h) {
+    var g = new Float32Array(w * h);
+    for (var i = 0, j = 0; i < g.length; i++, j += 4) {
+      g[i] = 0.299 * data[j] + 0.587 * data[j + 1] + 0.114 * data[j + 2];
+    }
+    return g;
+  }
+
+  /** Variance of Laplacian (kernel 4-jiran). Nilai tinggi = tajam. */
+  function laplacianVariance(gray, w, h) {
+    var n = 0, sum = 0, sq = 0;
+    for (var y = 1; y < h - 1; y++) {
+      for (var x = 1; x < w - 1; x++) {
+        var i = y * w + x;
+        var v = gray[i - w] + gray[i + w] + gray[i - 1] + gray[i + 1] - 4 * gray[i];
+        sum += v; sq += v * v; n++;
+      }
+    }
+    if (!n) return 0;
+    var mean = sum / n;
+    return sq / n - mean * mean;
+  }
+
+  function mean(gray) {
+    var s = 0;
+    for (var i = 0; i < gray.length; i++) s += gray[i];
+    return gray.length ? s / gray.length : 0;
+  }
+
+  function clipFractions(gray) {
+    var d = 0, b = 0;
+    for (var i = 0; i < gray.length; i++) { if (gray[i] < 18) d++; else if (gray[i] > 245) b++; }
+    return { dark: d / gray.length, bright: b / gray.length };
+  }
+
+  function lightingState(meanLuma, dark, bright) {
+    if (meanLuma < dark) return 'DARK';
+    if (meanLuma > bright) return 'BRIGHT';
+    return 'GOOD';
+  }
+
+  /**
+   * Kira kawasan potongan pasport (piksel sumber) daripada kotak wajah.
+   * face: {x,y,w,h, kp?:{reye,leye,nose}}  opts: {headRatio, topMargin, aspect}
+   * Kotak BlazeFace ~ dahi hingga dagu; tinggi kepala penuh ~ 1.35 x kotak, mahkota ~ 0.30 x kotak di atas kotak.
+   */
+  function computeCrop(face, W, H, opts) {
+    opts = opts || {};
+    var aspect = opts.aspect || PASSPORT.aspect;
+    var headRatio = opts.headRatio || 0.58;
+    var topMargin = opts.topMargin == null ? 0.10 : opts.topMargin;
+    var headH = face.h * 1.35;
+    var headTop = face.y - face.h * 0.30;
+    var cropH = headH / headRatio;
+    var cropW = cropH * aspect;
+    var cx = face.x + face.w / 2;
+    if (face.kp && face.kp.reye && face.kp.leye) cx = (face.kp.reye.x + face.kp.leye.x) / 2 * 0.5 + cx * 0.5;
+    var x = cx - cropW / 2;
+    var y = headTop - topMargin * cropH;
+    var over = {
+      left: Math.max(0, -x), right: Math.max(0, x + cropW - W),
+      top: Math.max(0, -y), bottom: Math.max(0, y + cropH - H)
+    };
+    var fits = over.left + over.right + over.top + over.bottom < 0.5;
+    return { x: x, y: y, w: cropW, h: cropH, fits: fits, over: over };
+  }
+
+  /** Alihkan potongan supaya muat dalam imej jika boleh (tanpa mengubah saiz). */
+  function nudgeInside(c, W, H) {
+    var r = { x: c.x, y: c.y, w: c.w, h: c.h };
+    if (r.w <= W) r.x = Math.min(Math.max(0, r.x), W - r.w);
+    if (r.h <= H) r.y = Math.min(Math.max(0, r.y), H - r.h);
+    return r;
+  }
+
+  /**
+   * Semakan langsung kedudukan. Kod: OK, NO_FACE, MULTI, BACK, CLOSER, CENTER, LOOK, TILT.
+   * faces: bilangan wajah; face: wajah utama; crop: hasil computeCrop.
+   */
+  function liveChecks(count, face, crop, W, H, opts) {
+    opts = opts || {};
+    var minPx = (opts.minCropPx || PASSPORT.h) * 0.85;
+    if (count === 0) return { code: 'NO_FACE', text: 'WAJAH TIDAK DIKESAN', ok: false };
+    if (count > 1) return { code: 'MULTI', text: 'HANYA SATU WAJAH', ok: false };
+    if (!crop.fits) {
+      var o = crop.over;
+      if (crop.h > H * 0.98 || o.bottom > 0) return { code: 'BACK', text: 'MOVE BACK', ok: false };
+      return { code: 'CENTER', text: 'CENTER YOUR FACE', ok: false };
+    }
+    if (crop.h < minPx || face.h / H < 0.10) return { code: 'CLOSER', text: 'MOVE CLOSER', ok: false };
+    var kp = face.kp;
+    if (kp && kp.reye && kp.leye && kp.nose) {
+      var ex = kp.leye.x - kp.reye.x, ey = kp.leye.y - kp.reye.y;
+      var eyeDist = Math.sqrt(ex * ex + ey * ey) || 1;
+      var roll = Math.abs(Math.atan2(ey, ex) * 180 / Math.PI);
+      if (roll > 90) roll = 180 - roll;
+      if (roll > 12) return { code: 'TILT', text: 'TEGAKKAN KEPALA', ok: false };
+      var yaw = Math.abs(kp.nose.x - (kp.reye.x + kp.leye.x) / 2) / eyeDist;
+      if (yaw > 0.32) return { code: 'LOOK', text: 'LOOK AT CAMERA', ok: false };
+    }
+    return { code: 'OK', text: 'FACE DETECTED', ok: true };
+  }
+
+  /** Keputusan akhir pemeriksaan kualiti. m: {faceCount, sharp, luma}; t: ambang. */
+  function qualityGate(m, t) {
+    var reasons = [];
+    var visionOff = m.faceCount === null;
+    if (!visionOff) {
+      if (m.faceCount === 0) reasons.push('Wajah tidak dikesan');
+      if (m.faceCount > 1) reasons.push('Lebih daripada satu wajah');
+    }
+    var sharpOk = m.sharp >= t.blur;
+    if (!sharpOk) reasons.push('BLUR DETECTED (' + Math.round(m.sharp) + ' < ' + t.blur + ')');
+    var light = lightingState(m.luma, t.dark, t.bright);
+    if (light === 'DARK') reasons.push('TOO DARK');
+    if (light === 'BRIGHT') reasons.push('TOO BRIGHT');
+    if (m.cropFits === false) reasons.push('Bahu/ruang kepala tidak mencukupi dalam bingkai');
+    return {
+      pass: reasons.length === 0,
+      status: reasons.length ? 'FAIL' : (visionOff ? 'UNCHECKED' : 'PASS'),
+      reasons: reasons, sharpOk: sharpOk, light: light
+    };
+  }
+
+  /** CSV: auto-kesan pemisah (, ; tab), petikan, BOM. Pulangkan array objek mengikut pengepala. */
+  function parseCSV(text) {
+    text = String(text).replace(/^﻿/, '');
+    var first = text.split(/\r?\n/)[0] || '';
+    var delim = ',';
+    var counts = { ',': 0, ';': 0, '\t': 0 };
+    for (var i = 0; i < first.length; i++) if (counts[first[i]] !== undefined) counts[first[i]]++;
+    if (counts[';'] > counts[delim]) delim = ';';
+    if (counts['\t'] > counts[delim]) delim = '\t';
+    var rows = [], row = [], cur = '', inQ = false;
+    for (var k = 0; k < text.length; k++) {
+      var c = text[k];
+      if (inQ) {
+        if (c === '"') { if (text[k + 1] === '"') { cur += '"'; k++; } else inQ = false; }
+        else cur += c;
+      } else if (c === '"') inQ = true;
+      else if (c === delim) { row.push(cur); cur = ''; }
+      else if (c === '\n' || c === '\r') {
+        if (c === '\r' && text[k + 1] === '\n') k++;
+        row.push(cur); cur = '';
+        if (row.some(function (x) { return x.trim() !== ''; })) rows.push(row);
+        row = [];
+      } else cur += c;
+    }
+    row.push(cur);
+    if (row.some(function (x) { return x.trim() !== ''; })) rows.push(row);
+    if (!rows.length) return [];
+    var head = rows.shift().map(function (h) { return h.trim().toUpperCase().replace(/[\s.]+/g, '_'); });
+    return rows.map(function (r) {
+      var o = {};
+      head.forEach(function (h, i) { o[h] = (r[i] || '').trim(); });
+      return o;
+    });
+  }
+
+  function mapStudentRow(o) {
+    function pick(keys) { for (var i = 0; i < keys.length; i++) if (o[keys[i]]) return o[keys[i]]; return ''; }
+    return {
+      id: pick(['ID', 'ID_MURID', 'STUDENT_ID', 'NO_ID']),
+      name: pick(['NAMA', 'NAMA_PENUH', 'NAMA_MURID', 'STUDENT_NAME', 'NAME']),
+      cls: pick(['KELAS', 'CLASS'])
+    };
+  }
+
+  /** Tetapkan ketumpatan 300 DPI dalam pengepala JFIF (jika ada). Pulangkan Uint8Array baharu. */
+  function setJpegDpi(bytes, dpi) {
+    var b = new Uint8Array(bytes);
+    if (b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF && b[3] === 0xE0 &&
+        b[6] === 0x4A && b[7] === 0x46 && b[8] === 0x49 && b[9] === 0x46 && b[10] === 0) {
+      b[13] = 1; b[14] = (dpi >> 8) & 255; b[15] = dpi & 255; b[16] = (dpi >> 8) & 255; b[17] = dpi & 255;
+    }
+    return b;
+  }
+
+  /** Susun atur A4: bilangan lajur/baris dan kedudukan sel (mm). */
+  function a4Layout(margin, gap, cw, ch) {
+    cw = cw || PASSPORT.mmW; ch = ch || PASSPORT.mmH;
+    var cols = Math.max(1, Math.floor((210 - 2 * margin + gap) / (cw + gap)));
+    var rows = Math.max(1, Math.floor((297 - 2 * margin + gap) / (ch + gap)));
+    var gridW = cols * cw + (cols - 1) * gap;
+    var ox = (210 - gridW) / 2;
+    var cells = [];
+    for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) {
+      cells.push({ x: +(ox + c * (cw + gap)).toFixed(3), y: +(margin + r * (ch + gap)).toFixed(3) });
+    }
+    return { cols: cols, rows: rows, perPage: cols * rows, cells: cells };
+  }
+
+  function sanitizeFile(s) { return String(s).replace(/[^\w\-]+/g, '_').replace(/_+/g, '_').slice(0, 60); }
+
+  /* ------------------ Bahagian bergantung DOM (tidak diuji dalam Node) ------------------ */
+
+  /** Analisis kawasan (kotak sumber) -> {sharp, luma, clip}. Dinormalkan ke 256px supaya ambang konsisten. */
+  function analyseRegion(src, box, work) {
+    var S = 256;
+    work = work || document.createElement('canvas');
+    work.width = S; work.height = S;
+    var ctx = work.getContext('2d', { willReadFrequently: true });
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(src, box.x, box.y, box.w, box.h, 0, 0, S, S);
+    var d = ctx.getImageData(0, 0, S, S);
+    var g = toGray(d.data, S, S);
+    return { sharp: laplacianVariance(g, S, S), luma: mean(g), clip: clipFractions(g) };
+  }
+
+  function faceRoi(face, W, H) {
+    var padX = face.w * 0.15, padY = face.h * 0.15;
+    var x = Math.max(0, face.x - padX), y = Math.max(0, face.y - padY);
+    var w = Math.min(W - x, face.w + 2 * padX), h = Math.min(H - y, face.h + 2 * padY);
+    return { x: x, y: y, w: Math.max(8, w), h: Math.max(8, h) };
+  }
+
+  /** Lukis potongan ke kanvas pasport; kawasan di luar imej diisi putih. Tiada regangan (nisbah tetap). */
+  function renderCrop(src, srcW, srcH, crop, outW, outH, fill) {
+    var cv = document.createElement('canvas');
+    cv.width = outW; cv.height = outH;
+    var ctx = cv.getContext('2d');
+    ctx.fillStyle = fill || '#fff';
+    ctx.fillRect(0, 0, outW, outH);
+    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+    var sx = Math.max(0, crop.x), sy = Math.max(0, crop.y);
+    var ex = Math.min(srcW, crop.x + crop.w), ey = Math.min(srcH, crop.y + crop.h);
+    if (ex > sx && ey > sy) {
+      var kx = outW / crop.w, ky = outH / crop.h;
+      ctx.drawImage(src, sx, sy, ex - sx, ey - sy, (sx - crop.x) * kx, (sy - crop.y) * ky, (ex - sx) * kx, (ey - sy) * ky);
+    }
+    return cv;
+  }
+
+  /**
+   * Gabung latar: mask = Float32Array kebarangkalian orang (w*h). Auto-terbalik jika sudut > tengah.
+   * Pulangkan kanvas baharu dengan latar berwarna.
+   */
+  function composeBackground(cropCanvas, mask, mw, mh, color) {
+    var m = mask;
+    var cs = 0, cn = 0, es = 0, en = 0;
+    for (var y = 0; y < mh; y++) for (var x = 0; x < mw; x++) {
+      var v = m[y * mw + x];
+      var inCenter = x > mw * 0.3 && x < mw * 0.7 && y > mh * 0.45 && y < mh * 0.95;
+      var inCorner = (y < mh * 0.2) && (x < mw * 0.2 || x > mw * 0.8);
+      if (inCenter) { cs += v; cn++; }
+      if (inCorner) { es += v; en++; }
+    }
+    var invert = cn && en && (es / en) > (cs / cn);
+    var a = document.createElement('canvas');
+    a.width = mw; a.height = mh;
+    var actx = a.getContext('2d');
+    var img = actx.createImageData(mw, mh);
+    for (var i = 0; i < mw * mh; i++) {
+      var p = invert ? 1 - m[i] : m[i];
+      var t = Math.min(1, Math.max(0, (p - 0.35) / 0.3));   // smoothstep sempit untuk tepi rambut
+      t = t * t * (3 - 2 * t);
+      img.data[i * 4 + 3] = Math.round(t * 255);
+    }
+    actx.putImageData(img, 0, 0);
+    var W = cropCanvas.width, H = cropCanvas.height;
+    var person = document.createElement('canvas');
+    person.width = W; person.height = H;
+    var pctx = person.getContext('2d');
+    pctx.drawImage(cropCanvas, 0, 0);
+    pctx.globalCompositeOperation = 'destination-in';
+    pctx.imageSmoothingEnabled = true; pctx.imageSmoothingQuality = 'high';
+    pctx.drawImage(a, 0, 0, W, H);
+    var out = document.createElement('canvas');
+    out.width = W; out.height = H;
+    var octx = out.getContext('2d');
+    octx.fillStyle = color; octx.fillRect(0, 0, W, H);
+    octx.drawImage(person, 0, 0);
+    return out;
+  }
+
+  function canvasToBlob(canvas, quality) {
+    return new Promise(function (res, rej) {
+      canvas.toBlob(function (b) { b ? res(b) : rej(new Error('Gagal menghasilkan JPEG')); }, 'image/jpeg', quality);
+    });
+  }
+
+  return {
+    PASSPORT: PASSPORT, toGray: toGray, laplacianVariance: laplacianVariance, mean: mean, clipFractions: clipFractions,
+    lightingState: lightingState, computeCrop: computeCrop, nudgeInside: nudgeInside, liveChecks: liveChecks,
+    qualityGate: qualityGate, parseCSV: parseCSV, mapStudentRow: mapStudentRow, setJpegDpi: setJpegDpi,
+    a4Layout: a4Layout, sanitizeFile: sanitizeFile,
+    analyseRegion: analyseRegion, faceRoi: faceRoi, renderCrop: renderCrop, composeBackground: composeBackground,
+    canvasToBlob: canvasToBlob
+  };
+})();
+</script>
+
+<script>
+/* Camera.html: pengesanan peranti, pengurusan kamera (USB/telefon/WiFi) dan MediaPipe (wajah + segmentasi). */
+
+var Device = (function () {
+  'use strict';
+  var ua = navigator.userAgent || '';
+  var touch = navigator.maxTouchPoints || 0;
+  function platform() {
+    if (/iPhone|iPod/.test(ua)) return 'iPhone';
+    if (/iPad/.test(ua) || (navigator.platform === 'MacIntel' && touch > 1)) return 'iPad';
+    if (/Android/.test(ua)) return 'Android';
+    if (/Win/i.test(navigator.platform) || /Windows/.test(ua)) return 'Windows (laptop/desktop)';
+    if (/Mac/i.test(navigator.platform)) return 'Mac (MacBook/iMac)';
+    if (/Linux|CrOS/.test(ua)) return 'Linux/ChromeOS';
+    return 'Tidak diketahui';
+  }
+  var P = platform();
+  var mobile = /iPhone|iPad|Android/.test(P);
+  /** Klasifikasi kamera daripada label (label hanya ada selepas kebenaran diberi). Heuristik, bukan jaminan. */
+  function classify(label) {
+    var l = String(label || '').toLowerCase();
+    if (/obs|virtual|camo|droidcam|ivcam|epoccam|iriun|manycam|snap camera|nvidia broadcast|continuity/.test(l)) return 'Kamera maya/aplikasi';
+    if (/back|rear|belakang|environment|facing back/.test(l)) return 'Kamera belakang';
+    if (/front|depan|user|facing front/.test(l)) return 'Kamera depan';
+    if (/facetime|built-?in|integrated|internal|isight|laptop|hp truevision|ir camera/.test(l)) return 'Terbina dalam';
+    if (/usb|webcam|logitech|c9[0-9]{2}|c2[0-9]{2}|brio|razer|kiyo|elgato|uvc|hd pro|ptz|microsoft|lifecam|genius|a4tech|rapoo|insta360|obsbot|canon|sony|nikon|gopro|osmo|dji/.test(l)) return 'USB/Luaran';
+    return 'Tidak diketahui';
+  }
+  function isExternal(kind) { return kind === 'USB/Luaran' || kind === 'Kamera maya/aplikasi'; }
+  return { platform: P, mobile: mobile, classify: classify, isExternal: isExternal };
+})();
+
+var Cam = (function () {
+  'use strict';
+  var S = {
+    stream: null, track: null, deviceId: null, devices: [], mode: 'local', video: null, img: null,
+    wifi: null, wanted: false, caps: null, af: 'UNKNOWN', reconnectTimer: null, reconnects: 0,
+    wifiTimer: null, tainted: false, status: 'IDLE', label: '', kind: '', ic: null, lastDevIds: null
+  };
+  var cb = { status: function () {}, devices: function () {}, event: function () {}, ready: function () {} };
+
+  function on(handlers) { for (var k in handlers) cb[k] = handlers[k]; }
+  function setStatus(code, detail) { S.status = code; cb.status(code, detail || ''); }
+
+  function describeError(e) {
+    var n = e && e.name;
+    if (n === 'NotAllowedError' || n === 'PermissionDeniedError') {
+      return { code: 'PERMISSION_REQUIRED', msg: 'Kebenaran kamera ditolak. Benarkan kamera untuk laman ini (ikon kunci pada bar alamat; iPhone: Tetapan > Safari > Kamera), kemudian tekan Cuba Lagi.' };
+    }
+    if (n === 'NotFoundError' || n === 'DevicesNotFoundError' || n === 'OverconstrainedError') {
+      return { code: 'NOT_FOUND', msg: 'Tiada kamera dikesan. Sambungkan webcam USB (mod webcam) atau gunakan peranti lain, kemudian tekan Cuba Lagi.' };
+    }
+    if (n === 'NotReadableError' || n === 'TrackStartError') {
+      return { code: 'ERROR', msg: 'Kamera sedang digunakan oleh aplikasi lain (Zoom/Teams/tab lain). Tutup aplikasi tersebut dan cuba lagi.' };
+    }
+    if (n === 'SecurityError') return { code: 'ERROR', msg: 'Akses kamera disekat atas sebab keselamatan. Pastikan laman dibuka melalui HTTPS dan bukan dalam bingkai yang tidak dibenarkan.' };
+    return { code: 'ERROR', msg: 'Kamera gagal dibuka: ' + ((e && (e.message || e.name)) || e) };
+  }
+
+  /* ---------- Senarai peranti ---------- */
+  async function listDevices() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) return [];
+    var all = await navigator.mediaDevices.enumerateDevices();
+    var cams = all.filter(function (d) { return d.kind === 'videoinput'; });
+    S.devices = cams.map(function (d, i) {
+      var label = d.label || ('Kamera ' + (i + 1));
+      return { id: d.deviceId, label: label, hasLabel: !!d.label, kind: Device.classify(d.label) };
+    });
+    cb.devices(S.devices);
+    return S.devices;
+  }
+
+  async function primePermission() {
+    var s = await navigator.mediaDevices.getUserMedia({ video: true });
+    s.getTracks().forEach(function (t) { t.stop(); });
+  }
+
+  function choosePreferred(devs) {
+    var saved = null;
+    try { saved = localStorage.getItem('skbt.cam'); } catch (e) { /* abaikan */ }
+    if (saved) { var m = devs.filter(function (d) { return d.id === saved; })[0]; if (m) return m; }
+    if (Device.mobile) {
+      var back = devs.filter(function (d) { return d.kind === 'Kamera belakang'; })[0];
+      if (back) return back;
+      return null; // guna facingMode: environment
+    }
+    var ext = devs.filter(function (d) { return d.kind === 'USB/Luaran'; })[0] ||
+              devs.filter(function (d) { return Device.isExternal(d.kind); })[0];
+    return ext || devs[0] || null;
+  }
+
+  /** Mula automatik: minta kebenaran, senarai kamera, pilih yang paling sesuai. */
+  async function autoStart() {
+    S.mode = 'local';
+    setStatus('CONNECTING');
+    if (!window.isSecureContext) { setStatus('ERROR', 'Akses kamera memerlukan HTTPS (atau localhost).'); return false; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setStatus('ERROR', 'Pelayar ini tidak menyokong akses kamera (getUserMedia). Gunakan Chrome, Edge atau Safari terkini.');
+      return false;
+    }
+    try { await primePermission(); }
+    catch (e) { var d = describeError(e); setStatus(d.code, d.msg); try { await listDevices(); } catch (x) { /* abaikan */ } return false; }
+    var devs = await listDevices();
+    if (!devs.length) { setStatus('NOT_FOUND', 'Tiada kamera dikesan.'); return false; }
+    var pick = choosePreferred(devs);
+    return start(pick ? { deviceId: pick.id } : { facing: 'environment' });
+  }
+
+  /* ---------- Mula / henti ---------- */
+  function stopLocal() {
+    clearTimeout(S.reconnectTimer);
+    if (S.stream) S.stream.getTracks().forEach(function (t) { t.onended = null; t.stop(); });
+    S.stream = null; S.track = null; S.ic = null;
+    if (S.video) { try { S.video.pause(); } catch (e) { /* abaikan */ } S.video.srcObject = null; }
+  }
+
+  function stopWifi() {
+    clearTimeout(S.wifiTimer);
+    if (S.img) { S.img.onload = null; S.img.onerror = null; S.img.removeAttribute('src'); }
+  }
+
+  function stop() {
+    S.wanted = false;
+    stopLocal(); stopWifi();
+    setStatus('IDLE');
+  }
+
+  async function start(opts) {
+    opts = opts || {};
+    stopLocal(); stopWifi();
+    S.mode = 'local'; S.wanted = true;
+    setStatus('CONNECTING');
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setStatus('ERROR', 'Pelayar tidak menyokong kamera.'); return false;
+    }
+    var base = { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30 } };
+    var attempts = [];
+    if (opts.deviceId) {
+      attempts.push({ video: Object.assign({ deviceId: { exact: opts.deviceId } }, base) });
+      attempts.push({ video: { deviceId: { exact: opts.deviceId } } });
+    } else if (opts.facing) {
+      attempts.push({ video: Object.assign({ facingMode: { ideal: opts.facing } }, base) });
+      attempts.push({ video: { facingMode: opts.facing } });
+      attempts.push({ video: true });
+    } else {
+      attempts.push({ video: base }); attempts.push({ video: true });
+    }
+    var stream = null, lastErr = null;
+    for (var i = 0; i < attempts.length && !stream; i++) {
+      try { stream = await navigator.mediaDevices.getUserMedia(attempts[i]); }
+      catch (e) { lastErr = e; if (e && (e.name === 'NotAllowedError' || e.name === 'SecurityError')) break; }
+    }
+    if (!stream) { var d = describeError(lastErr); setStatus(d.code, d.msg); return false; }
+    if (!S.wanted) { stream.getTracks().forEach(function (t) { t.stop(); }); return false; }
+
+    S.stream = stream; S.track = stream.getVideoTracks()[0];
+    var st = S.track.getSettings();
+    S.deviceId = st.deviceId || opts.deviceId || null;
+    S.track.onended = function () { handleLost('Kamera terputus'); };
+    S.track.onmute = function () { cb.event('muted', {}); };
+    S.track.onunmute = function () { cb.event('unmuted', {}); };
+
+    var v = S.video;
+    v.setAttribute('playsinline', ''); v.muted = true;
+    v.srcObject = stream;
+    try { await v.play(); } catch (e) { /* autoplay boleh gagal; elemen dimainkan selepas gesture */ }
+    await new Promise(function (res) {
+      if (v.readyState >= 2 && v.videoWidth) return res();
+      v.onloadeddata = function () { res(); };
+      setTimeout(res, 4000);
+    });
+    if (!v.videoWidth) { setStatus('ERROR', 'Kamera tidak menghantar video. Cuba kamera lain.'); return false; }
+
+    await listDevices().catch(function () {});
+    var dev = S.devices.filter(function (x) { return x.id === S.deviceId; })[0];
+    S.label = (dev && dev.label) || S.track.label || 'Kamera';
+    S.kind = (dev && dev.kind) || Device.classify(S.track.label);
+    if (S.deviceId) { try { localStorage.setItem('skbt.cam', S.deviceId); } catch (e) { /* abaikan */ } }
+    S.reconnects = 0;
+    await applyFocus();
+    setStatus('CONNECTED');
+    cb.ready(info());
+    setStatus('READY');
+    return true;
+  }
+
+  async function applyFocus() {
+    S.caps = (S.track && S.track.getCapabilities) ? S.track.getCapabilities() : {};
+    var wants = [['focusMode', 'continuous'], ['exposureMode', 'continuous'], ['whiteBalanceMode', 'continuous']];
+    for (var i = 0; i < wants.length; i++) {
+      var k = wants[i][0], val = wants[i][1];
+      if (S.caps[k] && S.caps[k].indexOf(val) >= 0) {
+        var c = {}; c[k] = val;
+        try { await S.track.applyConstraints({ advanced: [c] }); } catch (e) { /* tidak disokong */ }
+      }
+    }
+    var st = S.track.getSettings();
+    if (!S.caps.focusMode) S.af = 'UNSUPPORTED';
+    else S.af = st.focusMode === 'continuous' ? 'CONFIRMED' : 'NOT_CONFIRMED';
+  }
+
+  async function tapFocus(nx, ny) {
+    if (!S.track || S.mode !== 'local') return { ok: false, msg: 'Tap-to-focus hanya untuk kamera tempatan.' };
+    var caps = S.caps || {};
+    if (!caps.pointsOfInterest && !(caps.focusMode && caps.focusMode.indexOf('single-shot') >= 0)) {
+      return { ok: false, msg: 'Kamera/pelayar ini tidak menyokong tap-to-focus (biasa pada Chrome Android sahaja).' };
+    }
+    var c = {};
+    if (caps.pointsOfInterest) c.pointsOfInterest = [{ x: nx, y: ny }];
+    if (caps.focusMode && caps.focusMode.indexOf('single-shot') >= 0) c.focusMode = 'single-shot';
+    try {
+      await S.track.applyConstraints({ advanced: [c] });
+      setTimeout(function () { applyFocus(); }, 1800);
+      return { ok: true, msg: 'Arahan fokus dihantar. (Pelayar tidak melaporkan pengesahan fokus akhir.)' };
+    } catch (e) { return { ok: false, msg: 'Tap-to-focus ditolak oleh kamera.' }; }
+  }
+
+  function handleLost(reason) {
+    if (!S.wanted) return;
+    setStatus('DISCONNECTED', reason);
+    stopLocal();
+    var attempt = function () {
+      if (!S.wanted) return;
+      if (S.reconnects >= 6) { setStatus('DISCONNECTED', 'Sambungan semula gagal. Semak kabel/kamera dan tekan Cuba Lagi.'); return; }
+      S.reconnects++;
+      setStatus('CONNECTING', 'Cuba sambung semula (' + S.reconnects + '/6)...');
+      var id = S.deviceId;
+      listDevices().then(function (devs) {
+        var has = id && devs.some(function (d) { return d.id === id; });
+        if (has) return start({ deviceId: id });
+        var pick = choosePreferred(devs);
+        if (pick) return start({ deviceId: pick.id });
+        return false;
+      }).then(function (ok) {
+        if (!ok && S.wanted && S.status !== 'PERMISSION_REQUIRED') S.reconnectTimer = setTimeout(attempt, 2500);
+      }).catch(function () { S.reconnectTimer = setTimeout(attempt, 2500); });
+    };
+    S.reconnectTimer = setTimeout(attempt, 1500);
+  }
+
+  function retry() {
+    S.reconnects = 0;
+    if (S.mode === 'wifi' && S.wifi) return startWifi(S.wifi);
+    return autoStart();
+  }
+
+  function watchDevices() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.addEventListener) return;
+    navigator.mediaDevices.addEventListener('devicechange', async function () {
+      var before = {};
+      S.devices.forEach(function (d) { before[d.id] = d; });
+      var devs;
+      try { devs = await listDevices(); } catch (e) { return; }
+      var now = {};
+      devs.forEach(function (d) { now[d.id] = d; });
+      devs.forEach(function (d) { if (!before[d.id] && d.id) cb.event('added', d); });
+      Object.keys(before).forEach(function (id) { if (!now[id]) cb.event('removed', before[id]); });
+    });
+  }
+
+  /* ---------- Kamera WiFi / IP ---------- */
+  function startWifi(cfg) {
+    stopLocal(); stopWifi();
+    S.mode = 'wifi'; S.wifi = cfg; S.wanted = true; S.tainted = false;
+    var url = String(cfg.url || '').trim();
+    if (!/^https?:\/\//i.test(url)) { setStatus('ERROR', 'Alamat kamera mesti bermula dengan http:// atau https://'); return false; }
+    if (location.protocol === 'https:' && /^http:\/\//i.test(url)) {
+      setStatus('ERROR', 'Aplikasi HTTPS tidak boleh memuatkan kamera http:// (mixed content). Gunakan alamat https:// atau mod webcam/virtual camera.');
+      return false;
+    }
+    setStatus('CONNECTING', 'Menyambung ke kamera WiFi...');
+    var img = S.img;
+    img.crossOrigin = 'anonymous';
+    var ok = function () {
+      S.reconnects = 0;
+      S.label = 'Kamera WiFi'; S.kind = 'Kamera WiFi/IP'; S.af = 'UNSUPPORTED';
+      try {
+        var c = document.createElement('canvas'); c.width = c.height = 1;
+        var x = c.getContext('2d'); x.drawImage(img, 0, 0, 1, 1); x.getImageData(0, 0, 1, 1);
+        S.tainted = false;
+      } catch (e) { S.tainted = true; }
+      if (S.tainted) setStatus('ERROR', 'Video diterima tetapi kamera tidak menghantar header CORS, jadi gambar tidak boleh ditangkap. Gunakan mod webcam/virtual camera atau pelayan perantara.');
+      else { setStatus('CONNECTED'); cb.ready(info()); setStatus('READY'); }
+    };
+    var fail = function () {
+      if (!S.wanted || S.mode !== 'wifi') return;
+      setStatus('DISCONNECTED', 'Kamera WiFi tidak dapat dicapai');
+      if (S.reconnects < 8) {
+        S.reconnects++;
+        S.wifiTimer = setTimeout(function () { startWifi(cfg); }, Math.min(10000, 1500 * S.reconnects));
+      } else setStatus('DISCONNECTED', 'Sambungan semula gagal. Semak alamat/rangkaian atau pilih kamera lain.');
+    };
+    if (cfg.type === 'snapshot') {
+      var interval = Math.max(200, Number(cfg.interval) || 500);
+      var first = true;
+      var tick = function () {
+        if (!S.wanted || S.mode !== 'wifi') return;
+        img.onload = function () { if (first) { first = false; ok(); } S.wifiTimer = setTimeout(tick, interval); };
+        img.onerror = fail;
+        img.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_t=' + Date.now();
+      };
+      tick();
+    } else {
+      img.onload = ok; img.onerror = fail; img.src = url;
+    }
+    return true;
+  }
+
+  /* ---------- Tangkapan ---------- */
+  function getSource() {
+    if (S.mode === 'wifi') {
+      var i = S.img;
+      return (i && i.naturalWidth) ? { el: i, w: i.naturalWidth, h: i.naturalHeight } : null;
+    }
+    var v = S.video;
+    return (v && v.videoWidth && v.readyState >= 2) ? { el: v, w: v.videoWidth, h: v.videoHeight } : null;
+  }
+
+  /**
+   * Tangkap foto resolusi tertinggi. Pulangkan {blob, canvas?, bitmap, w, h, method}.
+   * ImageCapture.takePhoto (Chrome/Android/Edge) dipilih dahulu; jika tiada, bingkai penuh strim melalui Canvas.
+   */
+  async function snap(quality, preferTakePhoto) {
+    var src = getSource();
+    if (!src) throw new Error('Tiada bingkai video tersedia.');
+    if (S.mode === 'local' && preferTakePhoto && window.ImageCapture && S.track && S.track.readyState === 'live') {
+      try {
+        var ic = new ImageCapture(S.track);
+        var opts = {};
+        try {
+          var pc = await ic.getPhotoCapabilities();
+          if (pc && pc.imageWidth && pc.imageWidth.max) opts.imageWidth = Math.min(pc.imageWidth.max, 4032);
+          if (pc && pc.imageHeight && pc.imageHeight.max && opts.imageWidth) {
+            opts.imageHeight = Math.min(pc.imageHeight.max, Math.round(opts.imageWidth * pc.imageHeight.max / pc.imageWidth.max));
+          }
+        } catch (e) { /* guna lalai */ }
+        var blob = await ic.takePhoto(opts);
+        if (blob && blob.size > 0 && /jpeg|jpg/.test(blob.type || 'image/jpeg')) {
+          var bmp = await createImageBitmap(blob, { imageOrientation: 'from-image' });
+          return { blob: blob, bitmap: bmp, w: bmp.width, h: bmp.height, method: 'takePhoto' };
+        }
+      } catch (e) { /* jatuh balik ke canvas */ }
+    }
+    var cv = document.createElement('canvas');
+    cv.width = src.w; cv.height = src.h;
+    cv.getContext('2d').drawImage(src.el, 0, 0, src.w, src.h);
+    var b = await PP.canvasToBlob(cv, quality);   // sekali sahaja dikodkan
+    return { blob: b, bitmap: cv, w: src.w, h: src.h, method: 'canvas' };
+  }
+
+  function info() {
+    var st = S.track ? S.track.getSettings() : {};
+    var w = st.width || (S.video && S.video.videoWidth), h = st.height || (S.video && S.video.videoHeight);
+    if (S.mode === 'wifi' && S.img) { w = S.img.naturalWidth; h = S.img.naturalHeight; }
+    return { label: S.label, kind: S.kind, mode: S.mode, width: w, height: h, fps: st.frameRate, af: S.af,
+      canTapFocus: !!(S.caps && S.caps.pointsOfInterest), hasTakePhoto: !!window.ImageCapture && S.mode === 'local', deviceId: S.deviceId, tainted: S.tainted };
+  }
+
+  function bind(video, img) { S.video = video; S.img = img; watchDevices(); }
+
+  return {
+    bind: bind, on: on, listDevices: listDevices, autoStart: autoStart, start: start, stop: stop, retry: retry,
+    startWifi: startWifi, snap: snap, getSource: getSource, tapFocus: tapFocus, info: info,
+    get status() { return S.status; }, get mode() { return S.mode; }, get devices() { return S.devices; },
+    get deviceId() { return S.deviceId; }
+  };
+})();
+
+var Vision = (function () {
+  'use strict';
+  var BASE = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+  var FACE_MODEL = 'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite';
+  var SEG_MODEL = 'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_segmenter/float16/latest/selfie_segmenter.tflite';
+  var V = { mod: null, fileset: null, video: null, image: null, seg: null, loading: null, segLoading: null, error: null, lastTs: 0 };
+
+  async function base() {
+    if (V.mod) return;
+    V.mod = await import(BASE + '/vision_bundle.mjs');
+    V.fileset = await V.mod.FilesetResolver.forVisionTasks(BASE + '/wasm');
+  }
+
+  async function make(cls, extra) {
+    var opts = Object.assign({ baseOptions: { modelAssetPath: extra.model, delegate: 'GPU' } }, extra.opts);
+    try { return await V.mod[cls].createFromOptions(V.fileset, opts); }
+    catch (e) { opts.baseOptions.delegate = 'CPU'; return await V.mod[cls].createFromOptions(V.fileset, opts); }
+  }
+
+  /** Muat model wajah (sekali). Gagal -> V.error; aplikasi masih boleh digunakan dengan pemeriksaan manual. */
+  function load() {
+    if (V.loading) return V.loading;
+    V.loading = (async function () {
+      try {
+        await base();
+        V.video = await make('FaceDetector', { model: FACE_MODEL, opts: { runningMode: 'VIDEO', minDetectionConfidence: 0.6 } });
+        V.image = await make('FaceDetector', { model: FACE_MODEL, opts: { runningMode: 'IMAGE', minDetectionConfidence: 0.5 } });
+        V.error = null;
+      } catch (e) { V.error = e; V.loading = null; throw e; }
+    })();
+    return V.loading;
+  }
+
+  function mapDetections(res, cw, ch, sx, sy) {
+    return ((res && res.detections) || []).map(function (d) {
+      var b = d.boundingBox, k = d.keypoints || [];
+      function p(i) { return k[i] ? { x: k[i].x * cw * sx, y: k[i].y * ch * sy } : null; }
+      return {
+        x: b.originX * sx, y: b.originY * sy, w: b.width * sx, h: b.height * sy,
+        score: (d.categories && d.categories[0] && d.categories[0].score) || 0,
+        kp: k.length >= 3 ? { reye: p(0), leye: p(1), nose: p(2), mouth: p(3) } : null
+      };
+    }).sort(function (a, b) { return b.w * b.h - a.w * a.h; });
+  }
+
+  /** work = kanvas analisis (diskala daripada sumber); sx/sy = sumber/analisis. */
+  function detectVideo(work, sx, sy) {
+    if (!V.video) return null;
+    var ts = Math.max(performance.now(), V.lastTs + 1); V.lastTs = ts;
+    return mapDetections(V.video.detectForVideo(work, ts), work.width, work.height, sx, sy);
+  }
+
+  function detectImage(canvasLike, w, h, sx, sy) {
+    if (!V.image) return null;
+    return mapDetections(V.image.detect(canvasLike), w, h, sx, sy);
+  }
+
+  async function segment(canvas) {
+    if (!V.segLoading) {
+      V.segLoading = (async function () {
+        try {
+          await base();
+          V.seg = await make('ImageSegmenter', { model: SEG_MODEL, opts: { runningMode: 'IMAGE', outputConfidenceMasks: true, outputCategoryMask: false } });
+        } catch (e) { V.segLoading = null; throw e; }
+      })();
+    }
+    await V.segLoading;
+    var res = V.seg.segment(canvas);
+    var masks = res.confidenceMasks;
+    if (!masks || !masks.length) throw new Error('Model segmentasi tidak memulangkan mask');
+    var m = masks.length > 1 ? masks[1] : masks[0];
+    var out = { mask: Float32Array.from(m.getAsFloat32Array()), w: m.width, h: m.height };
+    if (res.close) res.close();
+    return out;
+  }
+
+  return { load: load, detectVideo: detectVideo, detectImage: detectImage, segment: segment,
+    get ready() { return !!V.video && !!V.image; }, get error() { return V.error; } };
+})();
+</script>
+
+<script>
+/* SKBT PHOTO ID 1.0 - logik aplikasi (UI, API, baris gilir muat naik, kamera, galeri, cetak, tetapan). */
+(function () {
+'use strict';
+
+/* ============================== Utiliti ============================== */
+var $ = function (s, r) { return (r || document).querySelector(s); };
+var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+function uuid() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  var a = new Uint8Array(16); (window.crypto || {}).getRandomValues ? crypto.getRandomValues(a) : a.forEach(function (_, i) { a[i] = Math.random() * 256; });
+  return Array.prototype.map.call(a, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+}
+function lsGet(k, d) { try { var v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* abaikan */ } }
+
+function toast(msg, kind, ms) {
+  var t = document.createElement('div');
+  t.className = 'toast ' + (kind || '');
+  t.textContent = msg;
+  $('#toasts').appendChild(t);
+  setTimeout(function () { t.remove(); }, ms || (kind === 'bad' ? 7000 : 3800));
+}
+
+function modal(html, wide) {
+  var m = document.createElement('div');
+  m.className = 'modal';
+  m.innerHTML = '<div class="box' + (wide ? ' wide' : '') + '">' + html + '</div>';
+  $('#modalRoot').appendChild(m);
+  m.close = function () { m.remove(); };
+  m.addEventListener('mousedown', function (e) { if (e.target === m) m.close(); });
+  return m;
+}
+
+function download(blobOrUrl, name) {
+  var a = document.createElement('a');
+  var url = typeof blobOrUrl === 'string' ? blobOrUrl : URL.createObjectURL(blobOrUrl);
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  if (typeof blobOrUrl !== 'string') setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+}
+
+function blobToB64(blob) {
+  return new Promise(function (res, rej) {
+    var r = new FileReader();
+    r.onload = function () { res(String(r.result).split(',')[1]); };
+    r.onerror = function () { rej(r.error); };
+    r.readAsDataURL(blob);
+  });
+}
+
+function dataUrlToBlob(u) {
+  var p = u.split(','), mime = (p[0].match(/:(.*?);/) || [])[1] || 'image/jpeg';
+  var bin = atob(p[1]), a = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+  return new Blob([a], { type: mime });
+}
+
+/* ============================== Keadaan ============================== */
+var CFG = window.SKBT_CONFIG || {};
+var S = {
+  user: null, classes: [], settings: {}, students: [], stats: null,
+  photos: {}, photosLoaded: false, pending: {}, printSel: {}, printCur: null,
+  imgCache: {}, page: 'dashboard'
+};
+var idToken = null;
+try { idToken = sessionStorage.getItem('skbt.idt'); } catch (e) { /* abaikan */ }
+
+function T() {
+  var s = S.settings;
+  return { blur: Number(s.BLUR_THRESHOLD) || 60, dark: Number(s.DARK_THRESHOLD) || 70, bright: Number(s.BRIGHT_THRESHOLD) || 200,
+    quality: Number(s.JPEG_QUALITY) || 0.95, frames: Number(s.AUTO_SNAP_FRAMES) || 8, head: Number(s.HEAD_RATIO) || 0.58 };
+}
+function byName(a, b) { return a.name.localeCompare(b.name, 'ms'); }
+function studentById(id) { return S.students.filter(function (s) { return s.id === id; })[0]; }
+
+/* ============================== API ============================== */
+function mkErr(code, msg) { var e = new Error(msg); e.code = code; return e; }
+function netErr(e) { return mkErr('NETWORK', 'Tiada sambungan ke pelayan (' + ((e && e.message) || e) + ')'); }
+
+async function api(action, payload) {
+  var req = JSON.stringify({ action: action, payload: payload || {}, idToken: idToken });
+  var text;
+  if (CFG.API_URL) {
+    var ctl = new AbortController();
+    var to = setTimeout(function () { ctl.abort(); }, 170000);
+    try {
+      var r = await fetch(CFG.API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: req, signal: ctl.signal });
+      text = await r.text();
+    } catch (e) { throw netErr(e); } finally { clearTimeout(to); }
+  } else if (window.google && google.script && google.script.run) {
+    text = await new Promise(function (res, rej) {
+      google.script.run.withSuccessHandler(res).withFailureHandler(function (e) { rej(netErr(e)); }).apiDispatch(req);
+    });
+  } else throw netErr(new Error('API_URL belum ditetapkan (config.js)'));
+  var out;
+  try { out = JSON.parse(text); } catch (e) { throw mkErr('NETWORK', 'Respons pelayan tidak sah. Semak deployment Web App (akses: Anyone).'); }
+  if (!out.ok) {
+    if (out.code === 'AUTH') showLogin('Sesi tamat. Sila log masuk semula. Gambar dalam baris gilir tidak hilang.');
+    throw mkErr(out.code, out.error);
+  }
+  return out.data;
+}
+
+function applyServer(d) {
+  if (!d) return;
+  if (d.students) { S.students = d.students; }
+  if (d.stats) S.stats = d.stats;
+}
+
+/* ============================== Log masuk ============================== */
+function jwtExp(t) { try { return JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).exp * 1000; } catch (e) { return 0; } }
+
+function showLogin(msg) {
+  $('#login').hidden = false; $('#shell').hidden = true;
+  $('#loginMsg').textContent = msg || '';
+  if (CFG.CLIENT_ID) initGsi();
+}
+
+var gsiReady = false;
+function initGsi() {
+  if (gsiReady) { try { google.accounts.id.renderButton($('#gsiButton'), { theme: 'filled_blue', size: 'large', shape: 'pill', width: 280 }); } catch (e) { /* abaikan */ } return; }
+  var tries = 0;
+  (function wait() {
+    if (window.google && google.accounts && google.accounts.id) {
+      gsiReady = true;
+      google.accounts.id.initialize({ client_id: CFG.CLIENT_ID, callback: onCredential, auto_select: true });
+      google.accounts.id.renderButton($('#gsiButton'), { theme: 'filled_blue', size: 'large', shape: 'pill', width: 280 });
+    } else if (tries++ < 100) setTimeout(wait, 100);
+    else $('#loginMsg').textContent = 'Gagal memuatkan Google Sign-In. Semak sambungan internet.';
+  })();
+}
+
+function onCredential(resp) {
+  idToken = resp.credential;
+  try { sessionStorage.setItem('skbt.idt', idToken); } catch (e) { /* abaikan */ }
+  boot();
+  var exp = jwtExp(idToken);
+  if (exp) setTimeout(function () { try { google.accounts.id.prompt(); } catch (e) { /* abaikan */ } }, Math.max(60000, exp - Date.now() - 300000));
+}
+
+/* ============================== Baris gilir muat naik (IndexedDB) ============================== */
+var Q = (function () {
+  var db = null, mem = {}, memOnly = false, flushing = false, timer = null;
+  function open() {
+    return new Promise(function (res) {
+      if (!window.indexedDB) { memOnly = true; return res(); }
+      var rq = indexedDB.open('skbt-photo-id', 1);
+      rq.onupgradeneeded = function () { rq.result.createObjectStore('queue', { keyPath: 'photoId' }); };
+      rq.onsuccess = function () { db = rq.result; res(); };
+      rq.onerror = function () { memOnly = true; res(); };
+    });
+  }
+  function tx(mode, fn) {
+    return new Promise(function (res, rej) {
+      var t = db.transaction('queue', mode), st = t.objectStore('queue'), r = fn(st);
+      t.oncomplete = function () { res(r && r.result); };
+      t.onerror = function () { rej(t.error); };
+      t.onabort = function () { rej(t.error); };
+    });
+  }
+  async function all() { if (!db && !memOnly) return []; if (memOnly) return Object.keys(mem).map(function (k) { return mem[k]; }); return (await tx('readonly', function (s) { return s.getAll(); })) || []; }
+  async function put(it) { if (memOnly) { mem[it.photoId] = it; return; } await tx('readwrite', function (s) { return s.put(it); }); }
+  async function del(id) { if (memOnly) { delete mem[id]; return; } await tx('readwrite', function (s) { return s.delete(id); }); }
+
+  async function refresh() {
+    var items = await all();
+    S.pending = {};
+    items.forEach(function (i) { S.pending[i.studentId] = true; });
+    var pill = $('#queuePill');
+    pill.hidden = !items.length;
+    $('#queueText').textContent = items.length + ' menunggu muat naik' + (memOnly ? ' (memori sahaja!)' : '');
+    return items;
+  }
+
+  async function add(item) { await put(item); await refresh(); schedule(); }
+
+  function schedule() {
+    clearTimeout(timer);
+    timer = setTimeout(function () { flush(); }, 45000);
+  }
+
+  async function flush() {
+    if (flushing || (!db && !memOnly)) return;
+    flushing = true;
+    var okCount = 0;
+    try {
+      var items = (await all()).sort(function (a, b) { return a.createdAt - b.createdAt; });
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        try {
+          var d = await api('savePhoto', {
+            photoId: it.photoId, studentId: it.studentId, cameraType: it.cameraType, width: it.width, height: it.height,
+            quality: it.quality, sharpness: it.sharpness, brightness: it.brightness, background: it.background,
+            original: await blobToB64(it.originalBlob), passport: await blobToB64(it.passportBlob)
+          });
+          await del(it.photoId);
+          applyServer(d);
+          if (d.record) S.photos[d.record.studentId] = d.record;
+          okCount++;
+        } catch (e) {
+          it.tries = (it.tries || 0) + 1; it.lastError = e.message;
+          await put(it);
+          if (e.code === 'NETWORK' || e.code === 'AUTH' || e.code === 'FORBIDDEN' || e.code === 'BUSY') break;
+        }
+      }
+    } finally {
+      flushing = false;
+      var left = await refresh();
+      if (okCount) { toast(okCount + ' gambar berjaya disimpan ke Google Drive', 'ok'); renderAll(); }
+      if (left.length) schedule();
+      if (S.page === 'settings') renderQueueList();
+    }
+  }
+  return { open: open, add: add, all: all, del: del, refresh: refresh, flush: flush, get memOnly() { return memOnly; } };
+})();
+
+/* ============================== Navigasi ============================== */
+var TITLES = { dashboard: 'Dashboard', camera: 'Ambil gambar', students: 'Pengurusan murid', gallery: 'Galeri foto', print: 'Cetak foto pasport', settings: 'Tetapan' };
+
+function route(page) {
+  var prev = S.page;
+  if (prev === 'camera' && page !== 'camera') cameraLeave();
+  S.page = page;
+  $$('.page').forEach(function (p) { p.classList.toggle('active', p.id === 'page-' + page); });
+  $$('.nav-btn').forEach(function (b) { b.classList.toggle('active', b.dataset.page === page); });
+  $('#pageTitle').textContent = TITLES[page];
+  window.scrollTo(0, 0);
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'camera') cameraEnter();
+  if (page === 'students') renderStudents();
+  if (page === 'gallery') galleryEnter();
+  if (page === 'print') printEnter();
+  if (page === 'settings') settingsEnter();
+}
+
+function renderAll() {
+  if (S.page === 'dashboard') renderDashboard();
+  if (S.page === 'students') renderStudents();
+  if (S.page === 'gallery') renderGallery();
+  if (S.page === 'camera') { fillStudentSelect(true); }
+}
+
+/* ============================== Dashboard ============================== */
+function renderDashboard() {
+  var st = S.stats || { total: 0, done: 0, pending: 0, byClass: {} };
+  var pct = st.total ? Math.round(st.done * 100 / st.total) : 0;
+  $('#statCards').innerHTML =
+    '<div class="card stat"><span class="muted small">Jumlah murid</span><b>' + st.total + '</b></div>' +
+    '<div class="card stat ok"><span class="muted small">Telah bergambar</span><b>' + st.done + '</b></div>' +
+    '<div class="card stat warn"><span class="muted small">Belum bergambar</span><b>' + st.pending + '</b></div>' +
+    '<div class="card stat"><span class="muted small">Kemajuan</span><b>' + pct + '%</b></div>';
+  var rows = S.classes.map(function (c) {
+    var b = (st.byClass || {})[c] || { total: 0, done: 0, photos: 0 };
+    var p = b.total ? Math.round(b.done * 100 / b.total) : 0;
+    return '<tr><td><b>' + esc(c) + '</b></td><td>' + b.total + '</td><td>' + b.done + '</td><td>' + (b.total - b.done) + '</td><td>' + b.photos +
+      '</td><td style="min-width:120px"><div class="bar"><i style="width:' + p + '%"></i></div></td><td>' + p + '%</td></tr>';
+  }).join('');
+  $('#classTable').innerHTML = '<thead><tr><th>Kelas</th><th>Murid</th><th>Bergambar</th><th>Belum</th><th>Gambar aktif</th><th>Kemajuan</th><th></th></tr></thead><tbody>' + rows + '</tbody>';
+  api('driveStatus').then(function (d) {
+    $('#driveStatus').innerHTML = d.ok
+      ? '<span class="tag ok">TERSAMBUNG</span> Sesi ' + esc(d.session) + ' · <a href="' + esc(d.rootUrl) + '" target="_blank" rel="noopener">Folder Drive</a> · <a href="' + esc(d.sheetUrl) + '" target="_blank" rel="noopener">Google Sheets</a><br>' +
+        (d.sessionFolder ? '' : '<span class="tag mid">Folder sesi belum ada – Admin: Tetapan > simpan sesi</span> ') + esc(d.quotaNote || '')
+      : '<span class="tag no">RALAT</span> ' + esc(d.error);
+  }).catch(function (e) { $('#driveStatus').innerHTML = '<span class="tag no">TIDAK TERSAMBUNG</span> ' + esc(e.message); });
+}
+
+/* ============================== Murid ============================== */
+function classOptions(sel, withAll) {
+  return (withAll ? '<option value="">Semua kelas</option>' : '') + S.classes.map(function (c) {
+    return '<option' + (c === sel ? ' selected' : '') + '>' + esc(c) + '</option>';
+  }).join('');
+}
+
+function renderStudents() {
+  var q = $('#stuSearch').value.trim().toLowerCase(), cls = $('#stuClass').value;
+  var list = S.students.filter(function (s) {
+    return (!cls || s.cls === cls) && (!q || s.name.toLowerCase().indexOf(q) >= 0 || s.id.toLowerCase().indexOf(q) >= 0);
+  });
+  $('#stuCount').textContent = list.length + ' murid dipaparkan daripada ' + S.students.length;
+  var admin = S.user && S.user.role === 'ADMIN';
+  $('#stuTable').innerHTML = '<thead><tr><th>Bil</th><th>Nama penuh</th><th>ID</th><th>Kelas</th><th>Status</th><th>Tarikh</th><th>Pautan</th><th></th></tr></thead><tbody>' +
+    list.map(function (s, i) {
+      var st = S.pending[s.id] ? '<span class="tag mid">MENUNGGU UPLOAD</span>' : (s.status === 'BERGAMBAR' ? '<span class="tag ok">BERGAMBAR</span>' : '<span class="tag no">BELUM</span>');
+      return '<tr><td>' + (i + 1) + '</td><td>' + esc(s.name) + '</td><td class="mono">' + esc(s.id) + '</td><td>' + esc(s.cls) + '</td><td>' + st + '</td><td>' + esc(s.date) + '</td><td>' +
+        (s.link ? '<a href="' + esc(s.link) + '" target="_blank" rel="noopener">Drive</a>' : '') + '</td><td style="white-space:nowrap">' +
+        '<button class="btn ghost sm" data-edit="' + esc(s.id) + '">Edit</button> ' +
+        (admin ? '<button class="btn ghost sm" data-del="' + esc(s.id) + '">Padam</button>' : '') + '</td></tr>';
+    }).join('') + '</tbody>';
+}
+
+function studentForm(s) {
+  var m = modal('<h3>' + (s ? 'Edit murid' : 'Tambah murid') + '</h3>' +
+    '<label class="f">ID murid (unik)</label><input type="text" id="fId" maxlength="30" value="' + esc(s ? s.id : '') + '">' +
+    '<label class="f">Nama penuh</label><input type="text" id="fName" maxlength="120" value="' + esc(s ? s.name : '') + '">' +
+    '<label class="f">Kelas</label><select id="fCls">' + classOptions(s ? s.cls : '') + '</select>' +
+    '<div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn ghost" id="fCancel">Batal</button><button class="btn" id="fSave">Simpan</button></div>');
+  $('#fCancel', m).onclick = m.close;
+  $('#fSave', m).onclick = async function () {
+    var b = this; b.disabled = true;
+    try {
+      var d = await api('saveStudent', { originalId: s ? s.id : null, id: $('#fId', m).value, name: $('#fName', m).value, cls: $('#fCls', m).value });
+      applyServer(d); m.close(); renderAll(); toast('Murid disimpan', 'ok');
+    } catch (e) { toast(e.message, 'bad'); b.disabled = false; }
+  };
+}
+
+var CSV_TEMPLATE = 'ID,NAMA,KELAS\n2026001,AHMAD ZAKWAN BIN ABDULLAH,1 AR-RAZI\n2026002,NUR AISYAH BINTI HASSAN,1 AR-RAZI\n';
+
+function csvImportFlow(text) {
+  var rows = PP.parseCSV(text).map(PP.mapStudentRow).filter(function (r) { return r.id || r.name; });
+  if (!rows.length) return toast('Tiada baris sah. Pastikan pengepala: ID, NAMA, KELAS.', 'bad');
+  var bad = rows.filter(function (r) { return !r.id || !r.name || S.classes.indexOf(String(r.cls).toUpperCase().replace(/\s+/g, ' ')) < 0; });
+  var m = modal('<h3>Import CSV</h3><p>' + rows.length + ' baris dibaca. <b>' + bad.length + '</b> baris mungkin tidak sah (ID/nama/kelas tiada atau kelas tidak dikenali) dan akan dilaporkan oleh pelayan.</p>' +
+    (bad.length ? '<div class="callout warn small">Contoh: ' + bad.slice(0, 3).map(function (r) { return esc(r.id + ' | ' + r.name + ' | ' + r.cls); }).join('<br>') + '</div>' : '') +
+    '<label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="impUpd"> Kemas kini murid jika ID sudah wujud</label>' +
+    '<div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn ghost" id="impC">Batal</button><button class="btn" id="impGo">Import</button></div>');
+  $('#impC', m).onclick = m.close;
+  $('#impGo', m).onclick = async function () {
+    var b = this; b.disabled = true; b.textContent = 'Mengimport…';
+    var tot = { added: 0, updated: 0, skipped: 0, errors: [] };
+    try {
+      for (var i = 0; i < rows.length; i += 400) {
+        var d = await api('importStudents', { rows: rows.slice(i, i + 400), mode: $('#impUpd', m).checked ? 'update' : 'skip' });
+        tot.added += d.added; tot.updated += d.updated; tot.skipped += d.skipped; tot.errors = tot.errors.concat(d.errors);
+        applyServer(d);
+      }
+      m.innerHTML = '<div class="box"><h3>Import selesai</h3><p>Ditambah: <b>' + tot.added + '</b> · Dikemas kini: <b>' + tot.updated + '</b> · Dilangkau: <b>' + tot.skipped + '</b> · Ralat: <b>' + tot.errors.length + '</b></p>' +
+        (tot.errors.length ? '<div class="callout bad small" style="max-height:200px;overflow:auto">' + tot.errors.slice(0, 40).map(esc).join('<br>') + '</div>' : '') +
+        '<div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="impOk">Tutup</button></div></div>';
+      $('#impOk', m).onclick = m.close; renderAll();
+    } catch (e) { toast(e.message, 'bad'); b.disabled = false; b.textContent = 'Import'; }
+  };
+}
+
+function sheetImportFlow() {
+  var m = modal('<h3>Import daripada Google Sheets</h3><p class="small muted">Lajur diperlukan: ID, NAMA, KELAS (pengepala baris pertama). Akaun pemilik skrip mesti mempunyai akses ke sheet tersebut.</p>' +
+    '<label class="f">Pautan atau ID Google Sheets</label><input type="text" id="gsUrl">' +
+    '<label class="f">Nama tab (kosong = tab pertama)</label><input type="text" id="gsTab">' +
+    '<label class="f" style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="gsUpd"> Kemas kini jika ID sudah wujud</label>' +
+    '<div class="row" style="margin-top:16px;justify-content:flex-end"><button class="btn ghost" id="gsC">Batal</button><button class="btn" id="gsGo">Import</button></div>');
+  $('#gsC', m).onclick = m.close;
+  $('#gsGo', m).onclick = async function () {
+    var b = this; b.disabled = true;
+    try {
+      var d = await api('importFromSheet', { spreadsheet: $('#gsUrl', m).value, sheetName: $('#gsTab', m).value, mode: $('#gsUpd', m).checked ? 'update' : 'skip' });
+      applyServer(d); m.close(); renderAll();
+      toast('Ditambah ' + d.added + ', dikemas kini ' + d.updated + ', dilangkau ' + d.skipped + ', ralat ' + d.errors.length, d.errors.length ? 'warn' : 'ok', 7000);
+    } catch (e) { toast(e.message, 'bad'); b.disabled = false; }
+  };
+}
+
+/* ============================== Halaman kamera ============================== */
+var C = {
+  on: false, wasOn: false, timer: null, work: document.createElement('canvas'), roi: document.createElement('canvas'), det: document.createElement('canvas'),
+  sharp: null, luma: null, hist: [], okFrames: 0, ready: false, autoSnap: false, counting: false, busy: false, saving: false,
+  shot: null, student: null, lastFace: 0, info: null, camMsg: ''
+};
+
+function selectedStudent() { return C.student ? studentById(C.student) : null; }
+
+function fillStudentSelect(keep) {
+  var cls = $('#camClass').value, q = $('#camSearch').value.trim().toLowerCase();
+  var list = S.students.filter(function (s) { return s.cls === cls && (!q || s.name.toLowerCase().indexOf(q) >= 0 || s.id.toLowerCase().indexOf(q) >= 0); });
+  var cur = keep ? C.student : null;
+  var sel = $('#camStudent');
+  sel.innerHTML = '<option value="">— pilih murid (' + list.length + ') —</option>' + list.map(function (s) {
+    var mark = S.pending[s.id] ? ' ⏳' : (s.status === 'BERGAMBAR' ? ' ✓' : '');
+    return '<option value="' + esc(s.id) + '">' + esc(s.name) + ' (' + esc(s.id) + ')' + mark + '</option>';
+  }).join('');
+  if (cur && list.some(function (s) { return s.id === cur; })) sel.value = cur; else if (!keep) C.student = null;
+  showStudentInfo();
+  updateButtons();
+}
+
+function showStudentInfo() {
+  var s = selectedStudent();
+  $('#studentInfo').innerHTML = s
+    ? '<b>' + esc(s.name) + '</b>ID: ' + esc(s.id) + '<br>Kelas: ' + esc(s.cls) + '<br>Status: ' +
+      (S.pending[s.id] ? '<span class="tag mid">MENUNGGU UPLOAD</span>' : s.status === 'BERGAMBAR' ? '<span class="tag ok">BERGAMBAR ' + esc(s.date) + '</span>' : '<span class="tag no">BELUM BERGAMBAR</span>')
+    : 'Tiada murid dipilih.';
+}
+
+function stepStudent(dir, onlyTodo) {
+  var cls = $('#camClass').value;
+  var list = S.students.filter(function (s) { return s.cls === cls; });
+  if (!list.length) return;
+  var idx = list.findIndex(function (s) { return s.id === C.student; });
+  for (var n = 1; n <= list.length; n++) {
+    var cand = list[(idx + dir * n + list.length * 2) % list.length];
+    if (idx < 0 && n === 1 && dir > 0) cand = list[0];
+    if (!onlyTodo || (cand.status !== 'BERGAMBAR' && !S.pending[cand.id])) {
+      if (onlyTodo && idx >= 0 && (idx + dir * n) < 0 && dir < 0) continue;
+      C.student = cand.id; $('#camSearch').value = ''; fillStudentSelect(true); $('#camStudent').value = cand.id; showStudentInfo(); updateButtons(); return;
+    }
+  }
+  if (onlyTodo) toast('Semua murid kelas ini sudah bergambar 🎉', 'ok');
+}
+
+function chip(id, text, cls) { var e = $(id); e.textContent = text; e.className = 'chip' + (cls ? ' ' + cls : ''); }
+
+function setCamStatus(code, detail) {
+  var map = { IDLE: ['CAMERA OFF', ''], CONNECTING: ['CONNECTING…', 'warn'], CONNECTED: ['CAMERA CONNECTED', 'ok'], READY: ['CAMERA READY', 'ok'],
+    DISCONNECTED: ['CAMERA DISCONNECTED', 'bad'], PERMISSION_REQUIRED: ['CAMERA PERMISSION REQUIRED', 'warn'], NOT_FOUND: ['NO CAMERA DETECTED', 'bad'], ERROR: ['CAMERA ERROR', 'bad'] };
+  var m = map[code] || [code, ''];
+  var usb = C.info && C.info.kind === 'USB/Luaran' && (code === 'READY' || code === 'CONNECTED');
+  chip('#chCam', m[0] + (usb ? ' · USB CAMERA DETECTED' : ''), m[1]);
+  var msg = $('#stageMsg');
+  if (code === 'READY') msg.hidden = true;
+  else {
+    msg.hidden = false;
+    msg.innerHTML = code === 'IDLE' ? 'Tekan <b>MULA KAMERA</b> untuk bermula.' : esc(detail || m[0]);
+  }
+  $('#btnStartCam').textContent = (code === 'PERMISSION_REQUIRED' || code === 'NOT_FOUND' || code === 'ERROR' || code === 'DISCONNECTED') ? 'Cuba lagi' : 'Mula kamera';
+  if (code !== 'READY') { setHint('', ''); C.ready = false; setChips(null); }
+  if (code === 'DISCONNECTED' || code === 'ERROR' || code === 'NOT_FOUND' || code === 'PERMISSION_REQUIRED') {
+    var key = code + (detail || '');
+    if (C.lastLog !== key) { C.lastLog = key; api('logCamera', { event: code, label: C.info && C.info.label, type: C.info && C.info.kind, detail: detail }).catch(function () {}); }
+  }
+  updateButtons();
+}
+
+function fitStage() {
+  var st = $('#stage'), src = Cam.getSource();
+  if (!src) return;
+  var wrapW = st.parentElement.clientWidth;
+  var maxH = Math.max(240, window.innerHeight * (window.innerWidth < 860 ? 0.58 : 0.66));
+  var h = wrapW * src.h / src.w, w = wrapW;
+  if (h > maxH) { h = maxH; w = h * src.w / src.h; }
+  st.style.aspectRatio = 'auto'; st.style.maxHeight = 'none';
+  st.style.width = Math.round(w) + 'px'; st.style.height = Math.round(h) + 'px';
+}
+
+function setHint(text, cls) {
+  var h = $('#hint');
+  h.hidden = !text; h.textContent = text; h.className = 'hint ' + (cls || '');
+}
+
+function setChips(m) {
+  if (!m) { chip('#chFace', 'FACE —'); chip('#chSharp', 'SHARPNESS —'); chip('#chLight', 'LIGHTING —'); chip('#chReady', 'NOT READY');
+    ['#qFace', '#qSharp', '#qLight'].forEach(function (i) { $(i).textContent = '—'; }); return; }
+  chip('#chFace', m.faceText, m.faceOk ? 'ok' : 'bad');
+  chip('#chSharp', m.sharpText, m.sharpOk ? 'ok' : (m.sharp == null ? '' : 'bad'));
+  chip('#chLight', m.lightText, m.light === 'GOOD' ? 'ok' : (m.light ? 'warn' : ''));
+  chip('#chReady', m.ready ? 'READY TO SNAP' : 'NOT READY', m.ready ? 'ok' : '');
+  $('#qFace').textContent = m.faceText; $('#qSharp').textContent = m.sharp == null ? '—' : Math.round(m.sharp) + ' (min ' + T().blur + ')';
+  $('#qLight').textContent = m.lightText;
+}
+
+function drawOverlay(src, face, crop, ready, mainCount) {
+  var ov = $('#overlay'), k = Math.min(1, 1280 / src.w);
+  var W = Math.round(src.w * k), H = Math.round(src.h * k);
+  if (ov.width !== W || ov.height !== H) { ov.width = W; ov.height = H; }
+  var g = ov.getContext('2d');
+  g.clearRect(0, 0, W, H);
+  var lw = Math.max(2, W / 380);
+  var fh = 0.92 * H, fw = 0.7 * fh;
+  if (fw > 0.94 * W) { fw = 0.94 * W; fh = fw / 0.7; }
+  var fx = (W - fw) / 2, fy = (H - fh) / 2;
+  g.save();
+  g.fillStyle = 'rgba(5,11,23,.38)';
+  g.beginPath(); g.rect(0, 0, W, H); g.rect(fx + fw, fy, -fw, fh); g.fill('evenodd');
+  g.restore();
+  var col = ready ? '#10b981' : 'rgba(255,255,255,.85)';
+  g.lineWidth = lw; g.strokeStyle = col;
+  g.strokeRect(fx, fy, fw, fh);
+  var headH = T().head * fh, headW = headH * 0.74;
+  g.setLineDash([lw * 3, lw * 3]);
+  g.beginPath(); g.ellipse(W / 2, fy + 0.10 * fh + headH / 2, headW / 2, headH / 2, 0, 0, Math.PI * 2); g.stroke();
+  g.beginPath(); g.moveTo(fx + fw * 0.12, fy + fh * 0.80); g.lineTo(fx + fw * 0.88, fy + fh * 0.80); g.stroke();   // paras bahu
+  g.setLineDash([]);
+  if (face) {
+    var s = k;
+    g.strokeStyle = ready ? '#34d399' : '#fbbf24'; g.lineWidth = lw;
+    g.strokeRect(face.x * s, face.y * s, face.w * s, face.h * s);
+    if (crop) { g.strokeStyle = 'rgba(56,189,248,.9)'; g.setLineDash([lw * 2, lw * 2]); g.strokeRect(crop.x * s, crop.y * s, crop.w * s, crop.h * s); g.setLineDash([]); }
+  }
+}
+
+function lightText(l) { return l === 'GOOD' ? 'LIGHTING GOOD' : l === 'DARK' ? 'TOO DARK · ADJUST LIGHTING' : l === 'BRIGHT' ? 'TOO BRIGHT · ADJUST LIGHTING' : 'LIGHTING —'; }
+
+function analyse(src) {
+  var th = T();
+  var k = Math.min(1, 640 / src.w), cw = Math.round(src.w * k), ch = Math.round(src.h * k);
+  var work = C.work;
+  if (work.width !== cw || work.height !== ch) { work.width = cw; work.height = ch; }
+  work.getContext('2d').drawImage(src.el, 0, 0, cw, ch);
+  var m = { faceText: 'FACE —', faceOk: false, sharp: C.sharp, sharpOk: false, sharpText: 'SHARPNESS —', light: null, lightText: 'LIGHTING —', ready: false };
+
+  if (!Vision.ready) {
+    m.faceText = Vision.error ? 'FACE AI OFF (manual)' : 'MEMUAT MODEL AI…';
+    chip('#chFace', m.faceText, 'warn'); drawOverlay(src, null, null, false, 0);
+    setHint(Vision.error ? 'Pengesanan wajah tidak tersedia – semak manual' : 'Memuatkan model wajah…', 'warn');
+    C.ready = false; updateButtons();
+    return;
+  }
+  var faces = Vision.detectVideo(work, src.w / cw, src.h / ch) || [];
+  var main = faces.length ? faces.filter(function (f) { return f.w * f.h >= 0.25 * faces[0].w * faces[0].h; }) : [];
+  var face = main[0] || null;
+  var crop = face ? PP.computeCrop(face, src.w, src.h, { headRatio: th.head }) : null;
+  var chk = PP.liveChecks(main.length, face, crop, src.w, src.h);
+
+  if (face) {
+    C.frame = (C.frame || 0) + 1;
+    if (C.frame % 2 === 0 || C.sharp == null) {
+      try {
+        var r = PP.analyseRegion(src.el, PP.faceRoi(face, src.w, src.h), C.roi);
+        C.sharp = C.sharp == null ? r.sharp : 0.5 * C.sharp + 0.5 * r.sharp;
+        C.luma = C.luma == null ? r.luma : 0.5 * C.luma + 0.5 * r.luma;
+      } catch (e) { C.sharp = null; }
+    }
+    C.hist.push({ x: (face.x + face.w / 2) / src.w, y: (face.y + face.h / 2) / src.h });
+    if (C.hist.length > 6) C.hist.shift();
+  } else { C.hist = []; C.sharp = null; C.luma = null; }
+
+  var stable = C.hist.length >= 5 && C.hist.every(function (p) { return Math.abs(p.x - C.hist[0].x) < 0.025 && Math.abs(p.y - C.hist[0].y) < 0.025; });
+  var light = C.luma == null ? null : PP.lightingState(C.luma, th.dark, th.bright);
+  var sharpOk = C.sharp != null && C.sharp >= th.blur;
+  m.faceText = chk.ok ? 'FACE DETECTED' : chk.text; m.faceOk = chk.ok;
+  m.sharp = C.sharp; m.sharpOk = sharpOk; m.sharpText = C.sharp == null ? 'SHARPNESS —' : (sharpOk ? 'SHARP' : 'BLUR DETECTED');
+  m.light = light; m.lightText = lightText(light);
+  m.ready = chk.ok && sharpOk && light === 'GOOD' && stable;
+  C.ready = m.ready;
+  setChips(m);
+  var el = $('#settingsLive'); if (el) el.textContent = C.sharp == null ? '—' : Math.round(C.sharp);
+  if (S.page === 'settings') $('#liveSharpHint').textContent = 'Nilai semasa daripada kamera: ' + (C.sharp == null ? '— (tiada wajah)' : Math.round(C.sharp));
+
+  if (!chk.ok) setHint(chk.text, chk.code === 'MULTI' || chk.code === 'NO_FACE' ? 'bad' : 'warn');
+  else if (light !== 'GOOD') setHint(light === 'DARK' ? 'TOO DARK · ADJUST LIGHTING' : 'TOO BRIGHT · ADJUST LIGHTING', 'warn');
+  else if (!sharpOk) setHint('BLUR DETECTED · TUNGGU FOKUS', 'warn');
+  else if (!stable) setHint('HOLD STILL', 'warn');
+  else setHint(selectedStudent() ? 'READY TO SNAP' : 'PILIH MURID DAHULU', selectedStudent() ? 'good' : 'warn');
+
+  drawOverlay(src, face, crop, m.ready, main.length);
+
+  if (C.autoSnap && m.ready && selectedStudent() && !C.counting && !C.shot && !C.busy) {
+    C.okFrames++;
+    if (C.okFrames >= th.frames) startCountdown();
+  } else if (!m.ready) C.okFrames = 0;
+  updateButtons();
+}
+
+async function liveLoop() {
+  clearTimeout(C.timer);
+  if (!C.on) return;
+  var delay = 140;
+  if (!C.shot && !C.busy && document.visibilityState === 'visible') {
+    var src = Cam.getSource();
+    if (src) { var t0 = performance.now(); try { analyse(src); } catch (e) { console.warn('analyse', e); } delay = Math.max(60, 140 - (performance.now() - t0)); }
+  } else delay = 250;
+  C.timer = setTimeout(liveLoop, delay);
+}
+
+async function startCountdown() {
+  if (C.counting) return;
+  C.counting = true;
+  var el = $('#countdown');
+  var bad = 0;
+  for (var n = 3; n >= 1; n--) {
+    el.hidden = false; el.textContent = n;
+    for (var i = 0; i < 10; i++) {
+      await sleep(100);
+      if (!C.counting || !C.autoSnap || C.shot) { cancelCountdown(); return; }
+    }
+    if (!C.ready) { bad++; if (bad >= 2) { cancelCountdown(); toast('Auto Snap dibatalkan – pastikan murid kekal tegak dan tenang', 'warn'); return; } }
+  }
+  cancelCountdown();
+  doSnap(true);
+}
+function cancelCountdown() { C.counting = false; C.okFrames = 0; var el = $('#countdown'); el.hidden = true; }
+
+function updateButtons() {
+  var hasCam = Cam.status === 'READY';
+  var s = selectedStudent();
+  $('#btnSnap').disabled = !hasCam || !!C.shot || C.busy || C.saving || !s;
+  $('#btnSnap').title = !s ? 'Pilih murid dahulu' : '';
+  $('#btnRetake').disabled = !C.shot || C.saving;
+  $('#btnSave').disabled = !(C.shot && C.shot.gate && C.shot.gate.pass && s) || C.saving || C.busy;
+  $('#btnDownload').disabled = !C.shot;
+  $('#btnPrintCur').disabled = !C.shot;
+  $('#btnAutoToggle').textContent = 'AUTO SNAP: ' + (C.autoSnap ? 'ON' : 'OFF');
+  $('#autoSnapLabel').textContent = 'AUTO SNAP: ' + (C.autoSnap ? 'ON' : 'OFF');
+  $('#optAutoSnap').checked = C.autoSnap;
+  $('#btnSave').textContent = C.saving ? 'MENYIMPAN…' : 'SAVE PHOTO';
+}
+
+function setAutoSnap(on) {
+  C.autoSnap = on; C.okFrames = 0; if (!on) cancelCountdown();
+  if (on && !Vision.ready) toast('Auto Snap memerlukan pengesanan wajah (model AI belum dimuatkan).', 'warn');
+  updateButtons();
+}
+
+function updateCamInfo() {
+  var i = C.info = Cam.info();
+  var res = i.width && i.height ? i.width + ' × ' + i.height : '—';
+  var hd = i.width && i.height && Math.max(i.width, i.height) >= 1920;
+  $('#camInfo').innerHTML = 'Peranti: <b>' + esc(Device.platform) + '</b> · Kamera: <b>' + esc(i.label || '—') + '</b> (' + esc(i.kind || '—') + ')';
+  $('#qRes').innerHTML = res + (i.width ? (hd ? ' <span class="tag ok">HD</span>' : ' <span class="tag mid">&lt; 1080p</span>') : '') +
+    (i.hasTakePhoto ? ' · takePhoto ✓' : '');
+  var af = { CONFIRMED: '<span class="tag ok">Continuous (disahkan)</span>', NOT_CONFIRMED: '<span class="tag mid">Tidak disahkan</span>', UNSUPPORTED: '<span class="tag no">Tiada kawalan fokus</span>', UNKNOWN: '—' };
+  $('#qAf').innerHTML = af[i.af] || '—' + (i.canTapFocus ? ' · ketik video untuk fokus' : '');
+  if (i.canTapFocus) $('#qAf').innerHTML += ' · ketik video = fokus';
+  $('#optMirror').checked = i.kind === 'Kamera depan' || $('#optMirror').checked;
+  applyMirror();
+  fitStage();
+  if (i.width && !hd) toast('Resolusi kamera di bawah 1080p. Gambar mungkin kurang tajam; cuba kamera lain atau dekatkan murid.', 'warn', 6000);
+}
+
+function applyMirror() {
+  var on = $('#optMirror').checked && Cam.mode === 'local';
+  $('#video').classList.toggle('mirror', on); $('#overlay').classList.toggle('mirror', on);
+}
+
+function fillCamSource() {
+  var sel = $('#camSource'), cur = Cam.mode === 'wifi' ? '__wifi' : Cam.deviceId;
+  var opts = Cam.devices.map(function (d) { return '<option value="' + esc(d.id) + '">' + esc(d.label) + ' — ' + esc(d.kind) + '</option>'; });
+  opts.push('<option value="__wifi">Kamera WiFi / IP (Tetapan)</option>');
+  sel.innerHTML = opts.join('');
+  if (cur) sel.value = cur;
+}
+
+async function startCamera() {
+  C.on = true; C.wasOn = true;
+  $('#video').hidden = false; $('#wifiImg').hidden = true;
+  var ok = await Cam.autoStart();
+  fillCamSource();
+  if (ok) liveLoop();
+  if (!Vision.ready && !Vision.error) Vision.load().then(function () { toast('Model pengesanan wajah sedia', 'ok', 2000); }).catch(function (e) {
+    toast('Model wajah gagal dimuatkan (' + (e.message || e) + '). Semakan wajah automatik tidak tersedia.', 'warn', 8000);
+  });
+}
+
+function stopCamera(keepWanted) {
+  C.on = false; clearTimeout(C.timer); cancelCountdown();
+  if (!keepWanted) C.wasOn = false;
+  Cam.stop();
+  var g = $('#overlay').getContext('2d'); g.clearRect(0, 0, $('#overlay').width, $('#overlay').height);
+  fillCamSource();
+}
+
+function cameraEnter() {
+  $('#camClass').innerHTML = classOptions($('#camClass').value || firstClassWithStudents());
+  fillStudentSelect(true);
+  if (!C.shot && (C.wasOn || lsGet('skbt.autostart', false)) && Cam.status !== 'READY') startCamera();
+  else if (Cam.status === 'READY') { C.on = true; liveLoop(); }
+}
+
+function cameraLeave() {
+  if (C.shot) { /* kekalkan pratonton; strim dihentikan */ }
+  var was = C.on || C.wasOn;
+  stopCamera(true); C.wasOn = was;
+}
+
+function firstClassWithStudents() {
+  for (var i = 0; i < S.classes.length; i++) if (S.students.some(function (s) { return s.cls === S.classes[i]; })) return S.classes[i];
+  return S.classes[0];
+}
+
+/* ---- Tangkapan ---- */
+function flash() { var f = $('#flash'); f.classList.add('on'); setTimeout(function () { f.classList.remove('on'); }, 60); }
+
+async function doSnap(auto) {
+  if (C.busy || C.shot) return;
+  if (!selectedStudent()) return toast('Pilih murid dahulu', 'warn');
+  if (!Cam.getSource()) return toast('Tiada bingkai kamera', 'bad');
+  C.busy = true; updateButtons(); flash();
+  try {
+    var cap = await Cam.snap(T().quality, $('#optTakePhoto').checked);
+    await processShot(cap, auto);
+  } catch (e) {
+    toast('Gagal mengambil gambar: ' + (e.message || e), 'bad');
+    if (/taint|insecure|security/i.test(String(e.message))) toast('Kamera WiFi tidak menghantar CORS – gunakan mod webcam/virtual camera.', 'warn', 9000);
+  } finally { C.busy = false; updateButtons(); }
+}
+
+async function processShot(cap, auto) {
+  var th = T(), W = cap.w, H = cap.h;
+  var faces = null;
+  if (Vision.ready) {
+    var k = Math.min(1, 1280 / Math.max(W, H)), cw = Math.round(W * k), ch = Math.round(H * k);
+    C.det.width = cw; C.det.height = ch;
+    C.det.getContext('2d').drawImage(cap.bitmap, 0, 0, cw, ch);
+    faces = Vision.detectImage(C.det, cw, ch, W / cw, H / ch) || [];
+  }
+  var main = faces ? faces.filter(function (f) { return f.w * f.h >= 0.25 * faces[0].w * faces[0].h; }) : null;
+  var face = main && main[0] || null;
+  var crop, fits = true;
+  if (face) {
+    crop = PP.computeCrop(face, W, H, { headRatio: th.head });
+    if (!crop.fits) {
+      if (crop.w <= W && crop.h <= H) crop = PP.nudgeInside(crop, W, H);
+      else {
+        fits = false;
+        var h = Math.min(H, W / 0.7); crop = { x: Math.max(0, face.x + face.w / 2 - 0.35 * h), y: Math.max(0, Math.min(H - h, face.y - 0.3 * face.h)), w: 0.7 * h, h: h };
+      }
+    }
+  } else {
+    var hh = Math.min(H, W / 0.7); crop = { x: (W - 0.7 * hh) / 2, y: (H - hh) / 2, w: 0.7 * hh, h: hh };
+  }
+  var roi = face ? PP.faceRoi(face, W, H) : { x: W * 0.3, y: H * 0.2, w: W * 0.4, h: H * 0.4 };
+  var met = PP.analyseRegion(cap.bitmap, roi, C.roi);
+  var gate = PP.qualityGate({ faceCount: main ? main.length : null, sharp: met.sharp, luma: met.luma, cropFits: fits }, th);
+  C.shot = { cap: cap, face: face, base: Object.assign({}, crop), crop: Object.assign({}, crop), zoom: 100, bg: $('input[name=bg]:checked').value, metrics: met, gate: gate, final: null, mask: null, maskKey: '', rid: 0, camInfo: Cam.info() };
+  setHint('', '');
+  showGate(gate, met);
+  $('#editTools').hidden = false;
+  $('#zoomRange').value = 100; $('#zoomVal').textContent = '100%';
+  await renderShot();
+  updateButtons();
+  if (!gate.pass) toast(gate.reasons.join(' · '), 'bad', 7000);
+  else if (auto) toast('Auto Snap berjaya – semak dan tekan SAVE PHOTO', 'ok');
+}
+
+function showGate(g, m) {
+  var box = $('#gateMsg');
+  box.hidden = false;
+  if (g.pass) {
+    box.className = 'callout';
+    box.innerHTML = '<b>' + (g.status === 'UNCHECKED' ? 'TIDAK DISEMAK (AI wajah tiada)' : 'LULUS') + '</b> · tajam ' + Math.round(m.sharp) + ' · cahaya ' + Math.round(m.luma) + ' (' + g.light + ')';
+  } else {
+    box.className = 'callout bad';
+    box.innerHTML = '<b>TIDAK LULUS – tekan RETAKE PHOTO</b><br>' + g.reasons.map(esc).join('<br>');
+  }
+}
+
+var bgTimer = null;
+async function renderShot() {
+  var sh = C.shot; if (!sh) return;
+  var id = ++sh.rid;
+  var P = PP.PASSPORT;
+  var base = PP.renderCrop(sh.cap.bitmap, sh.cap.w, sh.cap.h, sh.crop, P.w, P.h, '#ffffff');
+  showPreview(base);
+  sh.final = base;
+  $('#bgStatus').textContent = '';
+  if (sh.bg === 'original') { updateButtons(); return; }
+  $('#bgStatus').textContent = 'Memproses latar…';
+  clearTimeout(bgTimer);
+  bgTimer = setTimeout(async function () {
+    if (!C.shot || id !== C.shot.rid) return;
+    try {
+      var key = [sh.crop.x, sh.crop.y, sh.crop.w].map(function (n) { return Math.round(n); }).join(',');
+      if (sh.maskKey !== key) { sh.mask = await Vision.segment(base); sh.maskKey = key; }
+      if (!C.shot || id !== C.shot.rid) return;
+      var out = PP.composeBackground(base, sh.mask.mask, sh.mask.w, sh.mask.h, sh.bg === 'blue' ? '#1f5fbf' : '#ffffff');
+      sh.final = out; showPreview(out);
+      $('#bgStatus').textContent = 'Latar ' + (sh.bg === 'blue' ? 'biru' : 'putih') + ' digunakan. Semak tepi rambut sebelum simpan.';
+    } catch (e) {
+      sh.final = base; $('#bgStatus').textContent = 'Pembuangan latar gagal: ' + (e.message || e) + ' – gambar asal digunakan.';
+      toast('Pembuangan latar gagal. Pilih "Asal" atau cuba lagi (perlukan internet untuk memuat model).', 'warn', 6000);
+    }
+    updateButtons();
+  }, 280);
+}
+
+function showPreview(canvas) {
+  var pc = $('#previewCanvas');
+  pc.hidden = false; $('#previewEmpty').hidden = true;
+  pc.getContext('2d').drawImage(canvas, 0, 0);
+}
+
+function retake() {
+  if (C.saving) return;
+  C.shot = null; clearTimeout(bgTimer);
+  $('#previewCanvas').hidden = true; $('#previewEmpty').hidden = false; $('#editTools').hidden = true; $('#gateMsg').hidden = true;
+  C.okFrames = 0; C.hist = []; C.sharp = null;
+  updateButtons();
+  if (Cam.status !== 'READY' && C.wasOn) startCamera();
+  else if (!C.on && Cam.status === 'READY') { C.on = true; liveLoop(); }
+}
+
+function shotFileBase() {
+  var s = selectedStudent();
+  return s ? PP.sanitizeFile(s.id + '_' + s.name + '_' + s.cls) : 'FOTO';
+}
+
+async function passportBlob() {
+  var b = await PP.canvasToBlob(C.shot.final, T().quality);
+  var bytes = PP.setJpegDpi(new Uint8Array(await b.arrayBuffer()), PP.PASSPORT.dpi);
+  return new Blob([bytes], { type: 'image/jpeg' });
+}
+
+async function doSave() {
+  if (C.saving || !C.shot) return;
+  var s = selectedStudent();
+  if (!s) return toast('Pilih murid dahulu', 'warn');
+  if (!C.shot.gate.pass) return toast('Gambar tidak lulus pemeriksaan kualiti. Sila RETAKE.', 'bad');
+  if (s.status === 'BERGAMBAR' && !confirm(s.name + ' sudah mempunyai gambar.\nGambar lama TIDAK dipadam (disimpan sebagai versi lama dalam Drive). Teruskan simpan gambar baharu?')) return;
+  C.saving = true; updateButtons();
+  try {
+    var sh = C.shot, ci = sh.camInfo || {};
+    var item = {
+      photoId: uuid(), studentId: s.id, createdAt: Date.now(), tries: 0,
+      cameraType: ((ci.kind || '') + ' | ' + (ci.label || '') + ' | ' + sh.cap.method).substring(0, 80),
+      width: sh.cap.w, height: sh.cap.h, quality: sh.gate.status, sharpness: sh.metrics.sharp, brightness: sh.metrics.luma, background: sh.bg,
+      originalBlob: sh.cap.blob, passportBlob: await passportBlob()
+    };
+    await Q.add(item);        // disimpan dalam IndexedDB DAHULU - tidak hilang walaupun internet putus
+    toast('Disimpan dalam peranti. Memuat naik ke Google Drive…', '');
+    retake();
+    if ($('#optAutoNext').checked) stepStudent(1, true); else { showStudentInfo(); fillStudentSelect(true); }
+    Q.flush();
+  } catch (e) {
+    toast('Gagal menyimpan: ' + (e.message || e), 'bad');
+  } finally { C.saving = false; updateButtons(); }
+}
+
+function bindCamera() {
+  Cam.bind($('#video'), $('#wifiImg'));
+  Cam.on({
+    status: setCamStatus,
+    ready: function () { updateCamInfo(); fillCamSource(); },
+    devices: fillCamSource,
+    event: function (ev, d) {
+      if (ev === 'added') {
+        toast((d.kind === 'USB/Luaran' ? 'USB CAMERA DETECTED: ' : 'Kamera baharu: ') + d.label, 'ok', 5000);
+        api('logCamera', { event: 'DEVICE_ADDED', label: d.label, type: d.kind }).catch(function () {});
+        if (C.on && !Device.mobile && d.kind === 'USB/Luaran' && !C.shot && Cam.status !== 'CONNECTING') Cam.start({ deviceId: d.id });
+      } else if (ev === 'removed') {
+        toast('Kamera dicabut: ' + d.label, 'warn', 5000);
+        api('logCamera', { event: 'DEVICE_REMOVED', label: d.label, type: d.kind }).catch(function () {});
+      }
+    }
+  });
+  $('#btnStartCam').onclick = function () { if (Cam.mode === 'wifi' && Cam.status !== 'IDLE') { Cam.retry(); C.on = true; liveLoop(); } else startCamera(); };
+  $('#btnStopCam').onclick = function () { stopCamera(false); };
+  $('#camSource').onchange = async function () {
+    var v = this.value;
+    if (v === '__wifi') return connectWifi();
+    C.on = true; C.wasOn = true; $('#video').hidden = false; $('#wifiImg').hidden = true;
+    if (await Cam.start({ deviceId: v })) liveLoop();
+  };
+  $('#btnSwitchCam').onclick = async function () {
+    var devs = Cam.devices;
+    if (devs.length > 1) {
+      var i = devs.findIndex(function (d) { return d.id === Cam.deviceId; });
+      var next = devs[(i + 1) % devs.length];
+      C.on = true; $('#video').hidden = false; $('#wifiImg').hidden = true;
+      if (await Cam.start({ deviceId: next.id })) liveLoop();
+    } else if (Device.mobile) {
+      C.facing = C.facing === 'user' ? 'environment' : 'user';
+      C.on = true;
+      if (await Cam.start({ facing: C.facing })) liveLoop();
+    } else toast('Hanya satu kamera dikesan. Sambungkan webcam USB lain atau gunakan Kamera WiFi.', 'warn');
+  };
+  $('#optMirror').onchange = applyMirror;
+  $('#btnSnap').onclick = function () { doSnap(false); };
+  $('#btnRetake').onclick = retake;
+  $('#btnSave').onclick = doSave;
+  $('#btnAutoToggle').onclick = function () { setAutoSnap(!C.autoSnap); };
+  $('#optAutoSnap').onchange = function () { setAutoSnap(this.checked); };
+  $('#btnDownload').onclick = async function () {
+    if (!C.shot) return;
+    download(await passportBlob(), shotFileBase() + '_PASSPORT.jpg');
+    setTimeout(function () { if (C.shot) download(C.shot.cap.blob, shotFileBase() + '_ORIGINAL.jpg'); }, 600);
+  };
+  $('#btnPrintCur').onclick = function () {
+    if (!C.shot) return;
+    var s = selectedStudent();
+    S.printCur = { key: 'cur', label: s ? s.name : 'Pratonton', dataUrl: C.shot.final.toDataURL('image/jpeg', 0.95) };
+    route('print');
+  };
+  $('#camClass').onchange = function () { C.student = null; $('#camSearch').value = ''; fillStudentSelect(false); };
+  $('#camSearch').oninput = function () { fillStudentSelect(true); };
+  $('#camStudent').onchange = function () { C.student = this.value || null; showStudentInfo(); updateButtons(); };
+  $('#btnPrevStudent').onclick = function () { stepStudent(-1, false); };
+  $('#btnNextStudent').onclick = function () { stepStudent(1, false); };
+
+  // Tap-to-focus
+  $('#stage').addEventListener('click', async function (e) {
+    if (Cam.status !== 'READY' || C.shot) return;
+    var r = this.getBoundingClientRect();
+    var nx = (e.clientX - r.left) / r.width; if ($('#video').classList.contains('mirror')) nx = 1 - nx;
+    var res = await Cam.tapFocus(nx, (e.clientY - r.top) / r.height);
+    toast(res.msg, res.ok ? '' : 'warn', 3500);
+  });
+
+  // Edit pratonton
+  $$('input[name=bg]').forEach(function (r) { r.onchange = function () { if (C.shot) { C.shot.bg = this.value; renderShot(); } }; });
+  $('#zoomRange').oninput = function () {
+    if (!C.shot) return;
+    var sh = C.shot, z = Number(this.value) / 100; $('#zoomVal').textContent = this.value + '%';
+    var cx = sh.crop.x + sh.crop.w / 2, cy = sh.crop.y + sh.crop.h / 2;
+    sh.crop.w = sh.base.w / z; sh.crop.h = sh.crop.w / 0.7; sh.crop.x = cx - sh.crop.w / 2; sh.crop.y = cy - sh.crop.h / 2;
+    sh.zoom = this.value; renderShot();
+  };
+  $$('[data-nudge]').forEach(function (b) {
+    b.onclick = function () {
+      if (!C.shot) return; var d = this.dataset.nudge.split(',').map(Number);
+      C.shot.crop.x += d[0] * C.shot.crop.w * 0.015; C.shot.crop.y += d[1] * C.shot.crop.h * 0.015; renderShot();
+    };
+  });
+  $('#btnAutoCrop').onclick = function () { if (!C.shot) return; C.shot.crop = Object.assign({}, C.shot.base); $('#zoomRange').value = 100; $('#zoomVal').textContent = '100%'; renderShot(); };
+  var drag = null, pc = $('#previewCanvas');
+  pc.addEventListener('pointerdown', function (e) { if (!C.shot) return; drag = { x: e.clientX, y: e.clientY }; pc.setPointerCapture(e.pointerId); pc.style.cursor = 'grabbing'; });
+  pc.addEventListener('pointermove', function (e) {
+    if (!drag || !C.shot) return;
+    var r = pc.getBoundingClientRect(), f = C.shot.crop.w / r.width;
+    C.shot.crop.x -= (e.clientX - drag.x) * f; C.shot.crop.y -= (e.clientY - drag.y) * f;
+    drag = { x: e.clientX, y: e.clientY }; renderShot();
+  });
+  var end = function () { drag = null; pc.style.cursor = 'grab'; };
+  pc.addEventListener('pointerup', end); pc.addEventListener('pointercancel', end);
+
+  window.addEventListener('resize', fitStage);
+  window.addEventListener('orientationchange', function () { setTimeout(fitStage, 300); });
+  document.addEventListener('keydown', function (e) {
+    if (S.page !== 'camera' || e.code !== 'Space' || /INPUT|SELECT|TEXTAREA|BUTTON/.test((e.target.tagName || ''))) return;
+    e.preventDefault(); if (!$('#btnSnap').disabled) doSnap(false);
+  });
+  document.addEventListener('visibilitychange', function () {
+    if (S.page !== 'camera') return;
+    if (document.visibilityState === 'hidden') { if (C.on) { C.wasOn = true; stopCamera(true); } }
+    else if (C.wasOn && !C.shot && Cam.status !== 'READY') startCamera();
+  });
+  window.addEventListener('pagehide', function () { Cam.stop(); });
+}
+
+function connectWifi() {
+  var cfg = lsGet('skbt.wifi', null);
+  if (!cfg || !cfg.url) { toast('Isi alamat kamera WiFi dalam Tetapan dahulu.', 'warn'); route('settings'); return; }
+  C.on = true; C.wasOn = true;
+  $('#video').hidden = true; $('#wifiImg').hidden = false;
+  if (S.page !== 'camera') route('camera');
+  if (Cam.startWifi(cfg)) liveLoop();
+}
+
+/* ============================== Galeri ============================== */
+var G = { page: 0, per: 24, token: 0 };
+
+async function galleryEnter() {
+  if (!$('#galClass').options.length) $('#galClass').innerHTML = classOptions('', true);
+  renderGallery();
+  if (!S.photosLoaded) {
+    try {
+      var d = await api('listPhotos', {});
+      S.photos = {}; d.photos.forEach(function (p) { S.photos[p.studentId] = p; });
+      S.photosLoaded = true; renderGallery();
+    } catch (e) { toast(e.message, 'bad'); }
+  }
+}
+
+function galleryList() {
+  var q = $('#galSearch').value.trim().toLowerCase(), cls = $('#galClass').value, st = $('#galStatus').value;
+  return S.students.filter(function (s) {
+    if (cls && s.cls !== cls) return false;
+    if (q && s.name.toLowerCase().indexOf(q) < 0 && s.id.toLowerCase().indexOf(q) < 0) return false;
+    if (st === 'done' && s.status !== 'BERGAMBAR') return false;
+    if (st === 'todo' && s.status === 'BERGAMBAR') return false;
+    return true;
+  });
+}
+
+function renderGallery() {
+  var list = galleryList();
+  var pages = Math.max(1, Math.ceil(list.length / G.per));
+  if (G.page >= pages) G.page = pages - 1;
+  var slice = list.slice(G.page * G.per, (G.page + 1) * G.per);
+  var done = list.filter(function (s) { return s.status === 'BERGAMBAR'; }).length;
+  $('#galCount').textContent = list.length + ' murid · ' + done + ' bergambar · ' + (list.length - done) + ' belum';
+  $('#galPage').textContent = (G.page + 1) + ' / ' + pages;
+  $('#galGrid').innerHTML = slice.map(function (s) {
+    var rec = S.photos[s.id], has = s.status === 'BERGAMBAR';
+    var img = has && rec && S.imgCache[rec.passportFileId] ? '<img alt="" src="' + S.imgCache[rec.passportFileId] + '">' : (has ? 'Memuatkan…' : 'Belum bergambar');
+    return '<div class="gcard"><div class="gimg" data-view="' + esc(s.id) + '">' + img +
+      (has ? '<input class="sel" type="checkbox" data-sel="' + esc(s.id) + '"' + (S.printSel[s.id] ? ' checked' : '') + ' title="Pilih untuk cetak">' : '') + '</div>' +
+      '<div class="ginfo"><b>' + esc(s.name) + '</b>' + esc(s.cls) + '<br><span class="mono">' + esc(s.id) + '</span>' + (S.pending[s.id] ? '<br><span class="tag mid">MENUNGGU UPLOAD</span>' : '') + '</div>' +
+      '<div class="gact">' + (has ? '<button class="btn ghost sm" data-dl="' + esc(s.id) + '">Muat turun</button><button class="btn ghost sm" data-retake="' + esc(s.id) + '">Ambil semula</button>'
+        : '<button class="btn sm" data-retake="' + esc(s.id) + '">Ambil gambar</button>') + '</div></div>';
+  }).join('') || '<div class="muted">Tiada murid.</div>';
+  loadThumbs(slice);
+}
+
+async function fetchImages(ids) {
+  var need = ids.filter(function (id) { return id && !S.imgCache[id]; });
+  for (var i = 0; i < need.length; i += 8) {
+    var d = await api('getImages', { fileIds: need.slice(i, i + 8) });
+    Object.keys(d.images).forEach(function (k) { if (d.images[k]) S.imgCache[k] = d.images[k]; });
+  }
+}
+
+async function loadThumbs(slice) {
+  var tok = ++G.token;
+  var ids = slice.map(function (s) { return S.photos[s.id] && S.photos[s.id].passportFileId; }).filter(Boolean);
+  var need = ids.filter(function (id) { return !S.imgCache[id]; });
+  if (!need.length) return;
+  try {
+    for (var i = 0; i < need.length; i += 6) {
+      if (tok !== G.token) return;
+      await fetchImages(need.slice(i, i + 6));
+      if (tok !== G.token) return;
+      slice.forEach(function (s) {
+        var r = S.photos[s.id]; if (!r || !S.imgCache[r.passportFileId]) return;
+        var box = $('.gimg[data-view="' + CSS.escape(s.id) + '"]');
+        if (box && !box.querySelector('img')) { var im = document.createElement('img'); im.src = S.imgCache[r.passportFileId]; im.alt = ''; box.insertBefore(im, box.firstChild); if (box.firstChild.nodeType === 3) box.removeChild(box.firstChild); }
+      });
+    }
+  } catch (e) { toast('Gagal memuatkan imej: ' + e.message, 'bad'); }
+}
+
+async function viewPhoto(id) {
+  var s = studentById(id), rec = S.photos[id];
+  if (!s || !rec) return toast('Murid ini belum mempunyai gambar.', 'warn');
+  var m = modal('<h3>' + esc(s.name) + '</h3><div class="small muted">' + esc(s.cls) + ' · ID ' + esc(s.id) + ' · ' + esc(rec.date) + ' · ' + esc(rec.camera) + '</div>' +
+    '<div class="row" style="margin:10px 0"><button class="btn sm" id="vPass">Foto pasport</button><button class="btn ghost sm" id="vOrig">Gambar asal HD</button><button class="btn ghost sm" id="vDl">Muat turun</button><button class="btn ghost sm" id="vPr">Cetak</button></div>' +
+    '<div id="vBox" style="text-align:center;min-height:200px" class="muted">Memuatkan…</div>', true);
+  var which = 'passportFileId';
+  async function show() {
+    var box = $('#vBox', m); box.textContent = 'Memuatkan…';
+    try { await fetchImages([rec[which]]); box.innerHTML = '<img alt="" style="max-width:100%;max-height:70vh;border-radius:8px" src="' + S.imgCache[rec[which]] + '">'; }
+    catch (e) { box.textContent = e.message; }
+  }
+  $('#vPass', m).onclick = function () { which = 'passportFileId'; show(); };
+  $('#vOrig', m).onclick = function () { which = 'originalFileId'; show(); };
+  $('#vDl', m).onclick = function () { if (S.imgCache[rec[which]]) download(dataUrlToBlob(S.imgCache[rec[which]]), PP.sanitizeFile(s.id + '_' + s.name) + (which === 'passportFileId' ? '_PASSPORT' : '_ORIGINAL') + '.jpg'); };
+  $('#vPr', m).onclick = function () { S.printSel[id] = true; m.close(); route('print'); };
+  show();
+}
+
+/* ============================== Cetak ============================== */
+var PR = { items: [], sheets: [] };
+
+function printEnter() {
+  var ids = Object.keys(S.printSel).filter(function (k) { return S.printSel[k]; });
+  var parts = [];
+  if (S.printCur) parts.push('Pratonton semasa: <b>' + esc(S.printCur.label) + '</b>');
+  if (ids.length) parts.push(ids.length + ' murid dipilih daripada galeri: ' + ids.slice(0, 8).map(function (i) { var s = studentById(i); return esc(s ? s.name : i); }).join(', ') + (ids.length > 8 ? '…' : ''));
+  $('#prList').innerHTML = parts.length ? parts.join('<br>') : 'Tiada gambar dipilih. Pilih dalam Galeri (kotak semak) atau tekan PRINT PHOTO pada halaman kamera.';
+  if (!S.photosLoaded && ids.length) galleryEnter();
+}
+
+async function buildPrint() {
+  var ids = Object.keys(S.printSel).filter(function (k) { return S.printSel[k]; });
+  var items = [];
+  if (S.printCur) items.push(S.printCur);
+  if (ids.length) {
+    if (!S.photosLoaded) { var d = await api('listPhotos', {}); S.photos = {}; d.photos.forEach(function (p) { S.photos[p.studentId] = p; }); S.photosLoaded = true; }
+    var fileIds = ids.map(function (i) { return S.photos[i] && S.photos[i].passportFileId; }).filter(Boolean);
+    await fetchImages(fileIds);
+    ids.forEach(function (i) {
+      var r = S.photos[i]; if (r && S.imgCache[r.passportFileId]) items.push({ key: r.passportFileId, label: r.name, dataUrl: S.imgCache[r.passportFileId] });
+    });
+  }
+  if (!items.length) { toast('Tiada gambar untuk dicetak.', 'warn'); return false; }
+  var copies = Math.max(1, Math.min(60, Number($('#prCopies').value) || 1));
+  var margin = Number($('#prMargin').value) || 0, gap = Number($('#prGap').value) || 0;
+  var L = PP.a4Layout(margin, gap);
+  var cells = [];
+  items.forEach(function (it) { for (var c = 0; c < copies; c++) cells.push(it); });
+  var pages = [];
+  for (var i = 0; i < cells.length; i += L.perPage) pages.push(cells.slice(i, i + L.perPage));
+  PR.items = items; PR.pages = pages; PR.layout = L; PR.guides = $('#prGuides').checked;
+  $('#sheets').innerHTML = pages.map(function (pg) {
+    return '<div class="sheet">' + pg.map(function (it, idx) {
+      var pos = L.cells[idx];
+      return '<div class="cell' + (PR.guides ? ' guide' : '') + '" style="left:' + pos.x + 'mm;top:' + pos.y + 'mm"><img alt="" src="' + it.dataUrl + '"></div>';
+    }).join('') + '</div>';
+  }).join('');
+  var scaleEl = $('#previewScale');
+  var avail = $('#printSheets').clientWidth - 28, full = 210 * 3.7795;
+  var k = Math.min(1, avail / full);
+  scaleEl.style.width = '210mm'; scaleEl.style.transform = 'scale(' + k + ')';
+  scaleEl.style.marginBottom = '0';
+  requestAnimationFrame(function () { scaleEl.style.marginBottom = (-(1 - k) * scaleEl.offsetHeight) + 'px'; });
+  $('#prInfo').textContent = cells.length + ' keping · ' + pages.length + ' halaman A4 · ' + L.cols + '×' + L.rows + ' setiap halaman · setiap gambar 35 × 50 mm';
+  $('#btnPrPrint').disabled = false; $('#btnPrPdf').disabled = false;
+  return true;
+}
+
+function exportPdf() {
+  if (!window.jspdf) return toast('Pustaka PDF belum dimuatkan. Semak internet.', 'bad');
+  var doc = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+  PR.pages.forEach(function (pg, p) {
+    if (p) doc.addPage('a4', 'portrait');
+    pg.forEach(function (it, i) {
+      var pos = PR.layout.cells[i];
+      doc.addImage(it.dataUrl, 'JPEG', pos.x, pos.y, 35, 50, 'img' + (it.key || ''), 'FAST');
+      if (PR.guides) { doc.setDrawColor(120); doc.setLineWidth(0.1); doc.rect(pos.x, pos.y, 35, 50); }
+    });
+  });
+  doc.save('SKBT_PHOTO_ID_' + new Date().toISOString().slice(0, 10) + '.pdf');
+}
+
+/* ============================== Tetapan & Admin ============================== */
+function settingsEnter() {
+  var s = S.settings, admin = S.user && S.user.role === 'ADMIN';
+  var map = { sBlur: 'BLUR_THRESHOLD', sDark: 'DARK_THRESHOLD', sBright: 'BRIGHT_THRESHOLD', sJpeg: 'JPEG_QUALITY', sBg: 'DEFAULT_BG', sFrames: 'AUTO_SNAP_FRAMES', sHead: 'HEAD_RATIO', sSession: 'SESSION', sRetention: 'RETENTION_DAYS' };
+  Object.keys(map).forEach(function (id) { var e = $('#' + id); e.value = s[map[id]]; e.disabled = !admin; });
+  $('#btnSaveSettings').disabled = !admin;
+  $('#settingsNote').textContent = admin ? '' : 'Hanya Admin boleh mengubah tetapan ini.';
+  var w = lsGet('skbt.wifi', {}); $('#wType').value = w.type || 'mjpeg'; $('#wUrl').value = w.url || ''; $('#wInterval').value = w.interval || 500;
+  $('#sysInfo').innerHTML = 'Peranti: <b>' + esc(Device.platform) + '</b><br>Pengguna: <b>' + esc(S.user.email) + '</b> (' + S.user.role + ')<br>HTTPS/secure context: <b>' + (window.isSecureContext ? 'Ya' : 'TIDAK – kamera tidak akan berfungsi') + '</b><br>ImageCapture (takePhoto): <b>' + (window.ImageCapture ? 'Ya' : 'Tidak') + '</b><br>Storan baris gilir: <b>' + (Q.memOnly ? 'MEMORI SAHAJA (jangan tutup tab)' : 'IndexedDB') + '</b>';
+  $('#adminUsers').hidden = $('#adminRetention').hidden = $('#adminLogs').hidden = !admin;
+  renderQueueList();
+  if (admin) loadUsers();
+}
+
+async function renderQueueList() {
+  var items = await Q.all();
+  $('#queueList').innerHTML = items.length ? '<b>Baris gilir (' + items.length + ')</b><br>' + items.map(function (i) {
+    var st = studentById(i.studentId);
+    return esc(st ? st.name : i.studentId) + ' · cuba ' + (i.tries || 0) + 'x ' + (i.lastError ? '<span class="tag no">' + esc(i.lastError) + '</span>' : '') +
+      ' <button class="btn ghost sm" data-qdel="' + esc(i.photoId) + '">Buang</button><br>';
+  }).join('') : 'Tiada gambar menunggu muat naik.';
+}
+
+async function loadUsers() {
+  try {
+    var d = await api('listUsers');
+    $('#userTable').innerHTML = '<thead><tr><th>Emel</th><th>Nama</th><th>Peranan</th><th>Aktif</th><th></th></tr></thead><tbody>' + d.users.map(function (u) {
+      return '<tr><td>' + esc(u.EMAIL) + '</td><td>' + esc(u.NAME) + '</td><td>' + esc(u.ROLE) + '</td><td>' + esc(u.ACTIVE) + '</td><td><button class="btn ghost sm" data-udel="' + esc(u.EMAIL) + '">Padam</button></td></tr>';
+    }).join('') + '</tbody>';
+  } catch (e) { toast(e.message, 'bad'); }
+}
+
+/* ============================== Mula ============================== */
+function bindStatic() {
+  $$('.nav-btn').forEach(function (b) { b.onclick = function () { route(b.dataset.page); }; });
+  $('#btnAddStudent').onclick = function () { studentForm(null); };
+  $('#btnImportCsv').onclick = function () { $('#csvFile').click(); };
+  $('#csvFile').onchange = function () {
+    var f = this.files[0]; this.value = '';
+    if (!f) return;
+    var r = new FileReader(); r.onload = function () { csvImportFlow(String(r.result)); }; r.readAsText(f, 'utf-8'); };
+  $('#btnImportSheet').onclick = function () { if (S.user.role !== 'ADMIN') return toast('Hanya Admin', 'warn'); sheetImportFlow(); };
+  $('#btnTemplate').href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(CSV_TEMPLATE);
+  $('#stuSearch').oninput = renderStudents; $('#stuClass').onchange = renderStudents;
+  $('#stuTable').addEventListener('click', async function (e) {
+    var ed = e.target.closest('[data-edit]'), dl = e.target.closest('[data-del]');
+    if (ed) studentForm(studentById(ed.dataset.edit));
+    if (dl) {
+      var s = studentById(dl.dataset.del);
+      if (!confirm('Padam rekod murid ' + s.name + '?\nGambar dalam Google Drive TIDAK dipadam.')) return;
+      try { applyServer(await api('deleteStudent', { id: s.id })); renderAll(); toast('Murid dipadam', 'ok'); } catch (x) { toast(x.message, 'bad'); }
+    }
+  });
+
+  ['galSearch', 'galClass', 'galStatus'].forEach(function (id) { $('#' + id).addEventListener('input', function () { G.page = 0; renderGallery(); }); });
+  $('#galPrev').onclick = function () { if (G.page > 0) { G.page--; renderGallery(); } };
+  $('#galNext').onclick = function () { G.page++; renderGallery(); };
+  $('#galGrid').addEventListener('click', function (e) {
+    var sel = e.target.closest('[data-sel]'), v = e.target.closest('[data-view]'), dl = e.target.closest('[data-dl]'), rt = e.target.closest('[data-retake]');
+    if (sel) { S.printSel[sel.dataset.sel] = sel.checked; return; }
+    if (rt) { var s = studentById(rt.dataset.retake); C.student = s.id; route('camera'); $('#camClass').value = s.cls; fillStudentSelect(true); $('#camStudent').value = s.id; showStudentInfo(); updateButtons(); return; }
+    if (dl) { viewPhoto(dl.dataset.dl); return; }
+    if (v) viewPhoto(v.dataset.view);
+  });
+  $('#btnGalPrint').onclick = function () { route('print'); };
+
+  $('#btnPrBuild').onclick = async function () { var b = this; b.disabled = true; try { await buildPrint(); } catch (e) { toast(e.message, 'bad'); } b.disabled = false; };
+  $('#btnPrPrint').onclick = function () { window.print(); };
+  $('#btnPrPdf').onclick = exportPdf;
+  $('#btnPrClear').onclick = function () { S.printSel = {}; S.printCur = null; $('#sheets').innerHTML = ''; $('#btnPrPrint').disabled = $('#btnPrPdf').disabled = true; $('#prInfo').textContent = ''; printEnter(); };
+
+  $('#btnSaveSettings').onclick = async function () {
+    var b = this; b.disabled = true;
+    try {
+      var d = await api('saveSettings', { values: { BLUR_THRESHOLD: $('#sBlur').value, DARK_THRESHOLD: $('#sDark').value, BRIGHT_THRESHOLD: $('#sBright').value, JPEG_QUALITY: $('#sJpeg').value,
+        DEFAULT_BG: $('#sBg').value, AUTO_SNAP_FRAMES: $('#sFrames').value, HEAD_RATIO: $('#sHead').value, SESSION: $('#sSession').value, RETENTION_DAYS: $('#sRetention').value } });
+      S.settings = d.settings; toast('Tetapan disimpan', 'ok');
+    } catch (e) { toast(e.message, 'bad'); }
+    b.disabled = false;
+  };
+  $('#btnWifiSave').onclick = function () { lsSet('skbt.wifi', { type: $('#wType').value, url: $('#wUrl').value.trim(), interval: Number($('#wInterval').value) || 500 }); toast('Alamat kamera WiFi disimpan pada peranti ini', 'ok'); };
+  $('#btnWifiConnect').onclick = function () { $('#btnWifiSave').click(); route('camera'); setTimeout(connectWifi, 100); };
+  $('#btnRetryQueue').onclick = function () { Q.flush(); toast('Menghantar semula…'); };
+  $('#btnReloadData').onclick = async function () { try { var d = await api('getStudents'); applyServer(d); S.photosLoaded = false; renderAll(); toast('Data dimuat semula', 'ok'); } catch (e) { toast(e.message, 'bad'); } };
+  $('#queueList').addEventListener('click', async function (e) {
+    var b = e.target.closest('[data-qdel]'); if (!b) return;
+    if (!confirm('Buang gambar ini daripada baris gilir? Gambar TIDAK akan dimuat naik dan akan hilang.')) return;
+    await Q.del(b.dataset.qdel); await Q.refresh(); renderQueueList(); renderAll();
+  });
+  $('#btnAddUser').onclick = async function () {
+    try { await api('saveUser', { email: $('#uEmail').value, name: $('#uName').value, role: $('#uRole').value, active: true }); $('#uEmail').value = ''; $('#uName').value = ''; loadUsers(); toast('Pengguna disimpan', 'ok'); } catch (e) { toast(e.message, 'bad'); }
+  };
+  $('#userTable').addEventListener('click', async function (e) {
+    var b = e.target.closest('[data-udel]'); if (!b || !confirm('Padam pengguna ' + b.dataset.udel + '?')) return;
+    try { await api('deleteUser', { email: b.dataset.udel }); loadUsers(); } catch (x) { toast(x.message, 'bad'); }
+  });
+  $('#btnLoadLogs').onclick = async function () {
+    try {
+      var d = await api('getLogs', { sheet: $('#logSheet').value, limit: 150 });
+      var cols = d.rows.length ? Object.keys(d.rows[0]).filter(function (k) { return k !== '_row'; }) : [];
+      $('#logTable').innerHTML = '<thead><tr>' + cols.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        d.rows.map(function (r) { return '<tr>' + cols.map(function (c) { return '<td>' + esc(r[c]) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
+    } catch (e) { toast(e.message, 'bad'); }
+  };
+  $('#btnCheckExpired').onclick = async function () {
+    try {
+      var d = await api('listExpired', {});
+      var box = $('#expiredList');
+      if (!d.expired.length) { box.textContent = 'Tiada gambar melebihi ' + d.days + ' hari.'; return; }
+      box.innerHTML = '<b>' + d.expired.length + ' gambar melebihi ' + d.days + ' hari</b><br>' + d.expired.slice(0, 15).map(function (r) { return esc(r.name + ' (' + r.cls + ') ' + r.date); }).join('<br>') +
+        '<br><button class="btn red sm" id="btnPurge" style="margin-top:8px">Padam semua (ke tong sampah Drive)</button>';
+      $('#btnPurge').onclick = async function () {
+        var t = prompt('Ini akan memindahkan ' + d.expired.length + ' pasang gambar ke tong sampah Drive.\nTaip PADAM untuk mengesahkan:');
+        if (t !== 'PADAM') return;
+        try { var r = await api('purgeExpired', { confirm: 'PADAM', days: d.days, photoIds: d.expired.map(function (x) { return x.photoId; }) }); applyServer(r); S.photosLoaded = false; toast(r.purged + ' rekod dipadam', 'ok'); box.textContent = ''; } catch (e) { toast(e.message, 'bad'); }
+      };
+    } catch (e) { toast(e.message, 'bad'); }
+  };
+
+  function net() { var on = navigator.onLine; $('#netDot').className = 'dot ' + (on ? 'ok' : 'bad'); $('#netText').textContent = on ? 'Dalam talian' : 'Luar talian'; if (on) Q.flush(); }
+  window.addEventListener('online', net); window.addEventListener('offline', net); net();
+  window.addEventListener('beforeunload', function (e) { if (Q.memOnly && Object.keys(S.pending).length) { e.preventDefault(); e.returnValue = ''; } });
+}
+
+var booted = false;
+async function boot() {
+  $('#login').hidden = true;
+  try {
+    var d = await api('bootstrap');
+    S.user = d.user; S.classes = d.classes; S.settings = d.settings; S.students = d.students; S.stats = d.stats;
+  } catch (e) {
+    if (e.code === 'AUTH') return;
+    showLogin(e.message); return;
+  }
+  $('#shell').hidden = false;
+  $('#userPill').textContent = S.user.name + ' · ' + S.user.role;
+  if (!booted) {
+    booted = true;
+    $('#stuClass').innerHTML = classOptions('', true);
+    $('#galClass').innerHTML = classOptions('', true);
+    $('#camClass').innerHTML = classOptions(firstClassWithStudents());
+    var bgv = S.settings.DEFAULT_BG || 'white';
+    var r = $('input[name=bg][value=' + bgv + ']'); if (r) r.checked = true;
+    bindStatic(); bindCamera();
+    await Q.open();
+  }
+  await Q.refresh();
+  Q.flush();
+  route('dashboard');
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  var hasRun = window.google && google.script && google.script.run;
+  if (CFG.API_URL && CFG.CLIENT_ID) {
+    var exp = idToken ? jwtExp(idToken) : 0;
+    if (idToken && exp > Date.now() + 60000) boot(); else { idToken = null; showLogin(''); }
+  } else if (CFG.API_URL) { boot(); }
+  else if (hasRun) { boot(); }
+  else { $('#login').hidden = false; $('#loginMsg').textContent = 'Konfigurasi tiada: tetapkan API_URL dan CLIENT_ID dalam config.js (lihat PANDUAN.md).'; }
+});
+
+})();
+</script>
+
+</body>
+</html>
